@@ -1,0 +1,46 @@
+﻿<Page
+    x:Class="BassClefStudio.Dot.Game.Views.ShellPageMobile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BassClefStudio.Dot.Game.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:shell="using:Decklan.UWP.Navigation.Shell" xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource SystemChromeMediumLowColor}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Frame
+            x:Name="mainFrame"
+            Grid.Row="0"
+            Padding="8"/>
+        <winui:NavigationView
+            Grid.Row="1"
+            PaneDisplayMode="Top"
+            Background="{x:Null}"
+            SelectionChanged="NavigationView_SelectionChanged"
+            MenuItemsSource="{x:Bind ViewModel.NavigationPagesView, Mode=OneWay}"
+            SelectedItem="{x:Bind ViewModel.SelectedObject, Mode=TwoWay}"
+            IsBackEnabled="{x:Bind ViewModel.CanGoBack, Mode=OneWay}"
+            BackRequested="NavigationView_BackRequested">
+            <winui:NavigationView.Resources>
+                <SolidColorBrush x:Key="NavigationViewTopPaneBackground" Color="Transparent"/>
+            </winui:NavigationView.Resources>
+            <winui:NavigationView.MenuItemTemplate>
+                <DataTemplate x:DataType="shell:NavigationPageItem">
+                    <StackPanel
+                        Orientation="Horizontal" 
+                        Padding="4,0">
+                        <FontIcon 
+                            Glyph="{x:Bind Icon, Mode=OneWay}"/>
+                        <TextBlock 
+                            Margin="8,0,0,0"
+                            Text="{x:Bind Name, Mode=OneWay}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </winui:NavigationView.MenuItemTemplate>
+        </winui:NavigationView>
+    </Grid>
+</Page>

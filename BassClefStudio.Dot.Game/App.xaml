@@ -1,0 +1,10 @@
+﻿<appModel:Application
+    x:Class="BassClefStudio.Dot.Game.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:BassClefStudio.Dot.Game"
+    xmlns:appModel="using:Decklan.UWP.ApplicationModel">
+    <Application.Resources>
+        <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+    </Application.Resources>
+</appModel:Application>
