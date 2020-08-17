@@ -14,6 +14,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Decklan.UWP.Navigation.DI;
+using SkiaSharp.Views.UWP;
+using System.Diagnostics;
+using Windows.UI.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -31,7 +34,81 @@ namespace BassClefStudio.Dot.Game.Views
             this.InitializeComponent();
         }
 
+        DispatcherTimer dispatcherTimer;
         public void OnViewModelInitialized()
-        { }
+        {
+            Window.Current.CoreWindow.KeyDown += KeyInputOn;
+            Window.Current.CoreWindow.KeyUp += KeyInputOff;
+            Focus(FocusState.Keyboard);
+
+            dispatcherTimer = new DispatcherTimer();
+            dispatcherTimer.Interval = new TimeSpan(0,0,0,0,16);
+            dispatcherTimer.Tick += Tick;
+            dispatcherTimer.Start();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            Window.Current.CoreWindow.KeyDown -= KeyInputOn;
+            Window.Current.CoreWindow.KeyUp -= KeyInputOff;
+        }
+
+        object physicsLock = new object();
+        Stopwatch frameWatch = new Stopwatch();
+        private void Tick(object sender, object e)
+        {
+            lock (physicsLock)
+            {
+                frameWatch.Stop();
+                float time = frameWatch.ElapsedMilliseconds / 50f;
+                time = time > 1 ? 1 : time;
+                ViewModel.Update(time);
+                this.skiaPanel.Invalidate();
+                frameWatch.Restart();
+            }
+        }
+
+        private void OnPaintSurface(object sender, SkiaSharp.Views.UWP.SKPaintSurfaceEventArgs e)
+        {
+            // Get canvas and info
+            var canvas = e.Surface.Canvas;
+            SKXamlCanvas panel = (sender as SKXamlCanvas);
+            // Draw
+            ViewModel.PaintSurface(canvas, panel.CanvasSize);
+            // Save changes.
+            canvas.Flush();
+        }
+
+        private void KeyInputOn(object sender, KeyEventArgs e)
+        {
+            if(e.VirtualKey == Windows.System.VirtualKey.Up)
+            {
+                ViewModel.GameState.Inputs.Jump = true;
+            }
+            else if (e.VirtualKey == Windows.System.VirtualKey.Right)
+            {
+                ViewModel.GameState.Inputs.MoveRight = true;
+            }
+            else if (e.VirtualKey == Windows.System.VirtualKey.Left)
+            {
+                ViewModel.GameState.Inputs.MoveLeft = true;
+            }
+        }
+
+        private void KeyInputOff(object sender, KeyEventArgs e)
+        {
+            if (e.VirtualKey == Windows.System.VirtualKey.Up)
+            {
+                ViewModel.GameState.Inputs.Jump = false;
+            }
+            else if (e.VirtualKey == Windows.System.VirtualKey.Right)
+            {
+                ViewModel.GameState.Inputs.MoveRight = false;
+            }
+            else if (e.VirtualKey == Windows.System.VirtualKey.Left)
+            {
+                ViewModel.GameState.Inputs.MoveLeft = false;
+            }
+        }
     }
 }

@@ -8,14 +8,14 @@
 
   <Identity
     Name="6428d0f3-df94-4f59-b11e-c6cb9c175d14"
-    Publisher="CN=deckl"
-    Version="1.0.0.0" />
+    Publisher="CN=Decklan Spencer"
+    Version="0.1.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="6428d0f3-df94-4f59-b11e-c6cb9c175d14" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>BassClefStudio.Dot.Game</DisplayName>
-    <PublisherDisplayName>deckl</PublisherDisplayName>
+    <DisplayName>Dot: Return</DisplayName>
+    <PublisherDisplayName>Decklan Spencer</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,13 +32,19 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="BassClefStudio.Dot.Game.App">
       <uap:VisualElements
-        DisplayName="BassClefStudio.Dot.Game"
+        DisplayName="Dot: Return"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="BassClefStudio.Dot.Game"
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        BackgroundColor="#444444">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Dot: Return">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="#444444"/>
       </uap:VisualElements>
     </Application>
   </Applications>

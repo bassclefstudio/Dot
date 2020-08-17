@@ -11,9 +11,20 @@ namespace BassClefStudio.Dot.Core.Rendering
         public Vector2 CameraPosition { get; set; }
         public float Scale { get; set; }
 
+        public Camera()
+        {
+            CameraPosition = new Vector2(0, 0);
+            Scale = 1;
+        }
+
         public Vector2 ProjectVector(Vector2 point)
         {
             return Scale * (point - CameraPosition);
+        }
+
+        public void MoveCamera(GameState gameState, float deltaFrames)
+        {
+
         }
     }
 }

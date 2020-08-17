@@ -1,4 +1,6 @@
-﻿using BassClefStudio.Dot.Game.Views;
+﻿using BassClefStudio.Dot.Core;
+using BassClefStudio.Dot.Core.Rendering;
+using BassClefStudio.Dot.Game.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,7 @@ namespace BassClefStudio.Dot.Game
     /// </summary>
     sealed partial class App : Decklan.UWP.ApplicationModel.Application
     {
-        public App() : base(typeof(ShellPage), typeof(MainPage))
+        public App() : base(typeof(ShellPage), typeof(MainPage), new Type[] { typeof(GameModule), })
         {
         }
     }

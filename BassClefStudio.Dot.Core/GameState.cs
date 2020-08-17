@@ -1,5 +1,6 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Physics;
+using BassClefStudio.Dot.Core.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,11 +11,24 @@ namespace BassClefStudio.Dot.Core
     {
         public Map Map { get; set; }
 
-        public Player Player { get; set; }
+        public Player Player { get; }
 
-        public void DoPhysics()
+        public Camera Camera { get; }
+
+        public Inputs Inputs { get; }
+
+        public GameState()
         {
-            Player.DoPhysics(Map.CurrentLevel.Segments);
+            Map = new Map();
+            Camera = new Camera();
+            Player = new Player();
+            Inputs = new Inputs();
+        }
+
+        public void Update(float deltaFrames)
+        {
+            Player.DoPhysics(this, deltaFrames);
+            Camera.MoveCamera(this, deltaFrames);
         }
     }
 }

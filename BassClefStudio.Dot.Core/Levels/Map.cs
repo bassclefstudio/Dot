@@ -7,13 +7,18 @@ namespace BassClefStudio.Dot.Core.Levels
 {
     public class Map
     {
-        public IEnumerable<Level> Levels { get; }
+        public List<Level> Levels { get; }
         public int LevelIndex { get; set; }
         public Level CurrentLevel => Levels.ElementAtOrDefault(LevelIndex);
 
+        public Map()
+        {
+            Levels = new List<Level>();
+        }
+
         public Map(IEnumerable<Level> levels)
         {
-            Levels = levels;
+            Levels = new List<Level>(levels);
         }
     }
 }
