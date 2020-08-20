@@ -9,7 +9,8 @@ namespace BassClefStudio.Dot.Core
 {
     public class GameState
     {
-        public Map Map { get; set; }
+        private Map map;
+        public Map Map { get => map; set { MapChanged(map, value); map = value; ResetLevel(); } }
 
         public Player Player { get; }
 
@@ -19,16 +20,40 @@ namespace BassClefStudio.Dot.Core
 
         public GameState()
         {
-            Map = new Map();
-            Camera = new Camera();
             Player = new Player();
+            Camera = new Camera();
             Inputs = new Inputs();
+        }
+
+        private void MapChanged(Map oldMap, Map newMap)
+        {
+            if (oldMap != null)
+            {
+                oldMap.CurrentLevelChanged -= CurrentLevelChanged;
+            }
+
+            if (newMap != null)
+            {
+                newMap.CurrentLevelChanged += CurrentLevelChanged;
+            }
+        }
+
+        private void CurrentLevelChanged(object sender, EventArgs e)
+            => ResetLevel();
+        public void ResetLevel()
+        {
+            Player.SetStartingPos(Map.CurrentLevel);
+            // Reset camera instantly.
+            Camera.MoveCamera(this);
         }
 
         public void Update(float deltaFrames)
         {
-            Player.DoPhysics(this, deltaFrames);
-            Camera.MoveCamera(this, deltaFrames);
+            if (Map != null && Map.CurrentLevel != null)
+            {
+                Player.DoPhysics(this, deltaFrames);
+                Camera.MoveCamera(this, deltaFrames, 10);
+            }
         }
     }
 }

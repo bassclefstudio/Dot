@@ -8,6 +8,6 @@
     mc:Ignorable="d"
     Background="{x:Null}">
     <Grid>
-
+        <Button Content="Open" Command="{x:Bind ViewModel.OpenCommand, Mode=OneWay}"/>
     </Grid>
 </Page>

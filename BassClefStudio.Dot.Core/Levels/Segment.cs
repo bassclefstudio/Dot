@@ -12,9 +12,9 @@ namespace BassClefStudio.Dot.Core.Levels
         public Vector2? Point2 { get; set; }
 
         public string Id { get; set; }
-        public int? Arg { get; set; }
+        public float? Arg { get; set; }
 
-        public Segment(SegmentType type, Vector2 point1, string id = null, int? arg = null)
+        public Segment(SegmentType type, Vector2 point1, string id = null, float? arg = null)
         {
             Type = type;
             Point1 = point1;
@@ -22,7 +22,7 @@ namespace BassClefStudio.Dot.Core.Levels
             Arg = arg;
         }
 
-        public Segment(SegmentType type, Vector2 point1, Vector2 point2, string id = null, int? arg = null)
+        public Segment(SegmentType type, Vector2 point1, Vector2 point2, string id = null, float? arg = null)
             : this(type, point1, id, arg)
         {
             Point2 = point2;
@@ -31,6 +31,14 @@ namespace BassClefStudio.Dot.Core.Levels
 
     public enum SegmentType
     {
-        Wall = 0
+        Wall = 0,
+        Lava = 1,
+        Bounce = 2,
+        Flip = 3,
+        Portal = 4,
+        UI = 5,
+        Camera = 6,
+        Start = 7,
+        End = 8
     }
 }

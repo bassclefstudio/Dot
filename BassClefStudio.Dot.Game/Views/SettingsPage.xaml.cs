@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BassClefStudio.Dot.Game.ViewModels;
+using Decklan.UWP.Navigation.DI;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,11 +22,16 @@ namespace BassClefStudio.Dot.Game.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SettingsPage : Page
+    public sealed partial class SettingsPage : Page, IViewWithViewModel<SettingsViewModel>
     {
+        public SettingsViewModel ViewModel { get; set; }
+
         public SettingsPage()
         {
             this.InitializeComponent();
-        }
+        }        
+
+        public void OnViewModelInitialized()
+        { }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
@@ -14,73 +15,113 @@ namespace BassClefStudio.Dot.Core.Rendering
     {
         private Dictionary<string, SKPaint> Paints = new Dictionary<string, SKPaint>();
 
-        private const int GameSizeX = 480;
-        private const int GameSizeY = 360;
-
         public GameRenderer()
         {
-            Paints.Add("Line", new SKPaint()
+            Paints.Add("Base", new SKPaint()
             {
                 IsAntialias = true,
                 Style = SKPaintStyle.Stroke,
                 StrokeCap = SKStrokeCap.Round,
             });
 
-            var wallPaint = Paints["Line"].Clone();
-            wallPaint.Color = new SKColor(255, 255, 255);
-            wallPaint.StrokeWidth = 8;
-            Paints.Add("Wall", wallPaint);
+            void AddPaint(string name, string parent, SKColor color, float strokeWidth = 10)
+            {
+                var paint = Paints[parent].Clone();
+                paint.Color = color;
+                paint.StrokeWidth = strokeWidth;
+                Paints.Add(name, paint);
+            }
 
-            var playerPaint = Paints["Line"].Clone();
-            playerPaint.Color = new SKColor(255, 255, 255);
-            playerPaint.StrokeWidth = 12;
-            Paints.Add("Player", playerPaint);
-
-            var borderPaint = Paints["Line"].Clone();
-            borderPaint.Color = new SKColor(255, 255, 255);
-            borderPaint.StrokeWidth = 4;
-            Paints.Add("Border", borderPaint);
+            AddPaint("Border", "Base", new SKColor(255, 255, 255), 4);
+            AddPaint("Player", "Base", new SKColor(255, 255, 255), 12);
+            AddPaint("Wall", "Base", new SKColor(255, 255, 255));
+            AddPaint("Bounce", "Base", new SKColor(200, 200, 0));
+            AddPaint("Lava", "Base", new SKColor(255, 80, 80));
+            AddPaint("Portal", "Base", new SKColor(160, 0, 200), 16);
+            AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
 
-        public void Render(GameState gameState, SKCanvas canvas, SKSize canvasSize)
+        public void Render(GameState gameState, SKCanvas canvas)
         {
             canvas.Clear();
-            canvas.Scale(canvasSize.Width / GameSizeX, -canvasSize.Height / GameSizeY);
-            canvas.Translate(GameSizeX / 2f, -GameSizeY / 2f);
-            SKRect boundingRect = new SKRect(-GameSizeX / 2f, GameSizeY / 2f, GameSizeX / 2, -GameSizeY / 2);
-            canvas.ClipRect(boundingRect, SKClipOperation.Intersect, true);
-            canvas.DrawRect(boundingRect, Paints["Border"]);
+            float viewScale = gameState.Camera.ViewScale;
+            Vector2 canvasSize = gameState.Camera.ViewSize;
+            canvas.Scale(viewScale, -viewScale);
+            float width = canvasSize.X / (2 * viewScale);
+            float height = canvasSize.Y / (2 * viewScale);
+            canvas.Translate(width, -height);
 
-            if (gameState.Map.CurrentLevel != null)
+            SKRect boundingRect = new SKRect(-width, height, width, -height);
+            canvas.ClipRect(boundingRect, SKClipOperation.Intersect, true);
+            //canvas.DrawRect(boundingRect, Paints["Border"]);
+
+            if (gameState.Map != null)
             {
-                foreach (var segment in gameState.Map.CurrentLevel.Segments)
+                canvas.Scale(gameState.Camera.CameraScale);
+                canvas.Translate(-gameState.Camera.CameraPosition.X, -gameState.Camera.CameraPosition.Y);
+
+                if (gameState.Map.CurrentLevel != null)
                 {
-                    if (segment.Type == SegmentType.Wall)
+                    void DrawLine(Segment segment, string paintKey)
                     {
-                        Vector2 p1 = gameState.Camera.ProjectVector(segment.Point1);
-                        Vector2 p2 = gameState.Camera.ProjectVector(segment.Point2.Value);
+                        Vector2 p1 = segment.Point1;
+                        Vector2 p2 = segment.Point2.Value;
                         canvas.DrawLine(
                             p1.X,
                             p1.Y,
                             p2.X,
                             p2.Y,
-                            Paints["Wall"]);
+                            Paints[paintKey]);
                     }
+
+                    void DrawPoint(Segment segment, string paintKey)
+                    {
+                        Vector2 p1 = segment.Point1;
+                        canvas.DrawPoint(
+                            p1.X,
+                            p1.Y,
+                            Paints[paintKey]);
+                    }
+
+                    foreach (var segment in gameState.Map.CurrentLevel.Segments)
+                    {
+                        if (segment.Type == SegmentType.Wall)
+                        {
+                            DrawLine(segment, "Wall");
+                        }
+                        else if (segment.Type == SegmentType.Bounce)
+                        {
+                            DrawLine(segment, "Bounce");
+                        }
+                        else if (segment.Type == SegmentType.Lava)
+                        {
+                            DrawLine(segment, "Lava");
+                        }
+                        else if (segment.Type == SegmentType.Portal)
+                        {
+                            DrawPoint(segment, "Portal");
+                        }
+                        else if (segment.Type == SegmentType.End)
+                        {
+                            DrawPoint(segment, "End");
+                        }
+                    }
+
+                    byte alpha = 0;
+                    for (int i = 0; i < gameState.Player.Ghosts.Count; i++)
+                    {
+                        alpha += (byte)(255 / gameState.Player.Ghosts.Count);
+                        SKPaint ghostPaint = Paints["Player"].Clone();
+                        ghostPaint.StrokeWidth = (i + 1) * (12 / gameState.Player.Ghosts.Count);
+                        ghostPaint.Color = new SKColor(255, 255, 255, alpha);
+
+                        Vector2 ghostPos = gameState.Player.Ghosts[i];
+                        canvas.DrawPoint(ghostPos.X, ghostPos.Y, ghostPaint);
+                    }
+
+                    Vector2 playerPos = gameState.Player.Position;
+                    canvas.DrawPoint(playerPos.X, playerPos.Y, Paints["Player"]);
                 }
-
-                Debug.WriteLine("Rendering player...");
-                byte alpha = 0;
-                for (int i = 0; i < gameState.Player.Ghosts.Count; i++)
-                {
-                    alpha += (byte)(255 / gameState.Player.Ghosts.Count);
-                    SKPaint ghostPaint = Paints["Player"].Clone();
-                    ghostPaint.StrokeWidth = i * (12 / gameState.Player.Ghosts.Count);
-                    ghostPaint.Color = new SKColor(255, 255, 255, alpha);
-
-                    canvas.DrawPoint(gameState.Player.Ghosts[i].X, gameState.Player.Ghosts[i].Y, ghostPaint);
-                }
-
-                canvas.DrawPoint(gameState.Player.Position.X, gameState.Player.Position.Y, Paints["Player"]);
             }
         }
 

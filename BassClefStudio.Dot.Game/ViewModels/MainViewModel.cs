@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 using BassClefStudio.Dot.Core;
 using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Rendering;
+using BassClefStudio.Dot.Serialization;
 using Decklan.NET.Core;
+using Decklan.UWP.Core;
 using Decklan.UWP.Navigation.DI;
+using Newtonsoft.Json.Linq;
 using SkiaSharp;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 
 namespace BassClefStudio.Dot.Game.ViewModels
 {
@@ -26,19 +31,12 @@ namespace BassClefStudio.Dot.Game.ViewModels
         }
 
         public async Task Initialize()
-        {
-            GameState.Map.Levels.Add(
-                new Level(
-                    new Segment[] 
-                    {
-                        new Segment(SegmentType.Wall, new Vector2(0,-60), new Vector2(100,-60)),
-                        new Segment(SegmentType.Wall, new Vector2(0,60), new Vector2(180,60))
-                    }));
-        }
+        { }
 
         public void PaintSurface(SKCanvas canvas, SKSize canvasSize)
         {
-            GameRenderer.Render(GameState, canvas, canvasSize);
+            GameState.Camera.SetView(new Vector2(canvasSize.Width, canvasSize.Height), 4);
+            GameRenderer.Render(GameState, canvas);
         }
 
         public void Update(float deltaFrames)

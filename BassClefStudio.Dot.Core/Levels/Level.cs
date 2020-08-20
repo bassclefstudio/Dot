@@ -6,10 +6,12 @@ namespace BassClefStudio.Dot.Core.Levels
 {
     public class Level
     {
+        public string Name { get; }
         public IEnumerable<Segment> Segments { get; }
 
-        public Level(IEnumerable<Segment> segments)
+        public Level(string name, IEnumerable<Segment> segments)
         {
+            Name = name;
             Segments = segments;
         }
     }

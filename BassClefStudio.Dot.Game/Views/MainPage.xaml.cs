@@ -51,6 +51,7 @@ namespace BassClefStudio.Dot.Game.Views
         {
             Window.Current.CoreWindow.KeyDown -= KeyInputOn;
             Window.Current.CoreWindow.KeyUp -= KeyInputOff;
+            dispatcherTimer.Stop();
         }
 
         object physicsLock = new object();
@@ -59,12 +60,11 @@ namespace BassClefStudio.Dot.Game.Views
         {
             lock (physicsLock)
             {
-                frameWatch.Stop();
-                float time = frameWatch.ElapsedMilliseconds / 50f;
+                float time = frameWatch.ElapsedMilliseconds / 30f;
                 time = time > 1 ? 1 : time;
+                frameWatch.Restart();
                 ViewModel.Update(time);
                 this.skiaPanel.Invalidate();
-                frameWatch.Restart();
             }
         }
 
