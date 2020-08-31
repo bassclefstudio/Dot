@@ -38,6 +38,7 @@ namespace BassClefStudio.Dot.Core.Rendering
             AddPaint("Bounce", "Base", new SKColor(200, 200, 0));
             AddPaint("Lava", "Base", new SKColor(255, 80, 80));
             AddPaint("Portal", "Base", new SKColor(160, 0, 200), 16);
+            AddPaint("Flip", "Base", new SKColor(255, 0, 255), 4);
             AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
 
@@ -96,6 +97,10 @@ namespace BassClefStudio.Dot.Core.Rendering
                         else if (segment.Type == SegmentType.Lava)
                         {
                             DrawLine(segment, "Lava");
+                        }
+                        else if (segment.Type == SegmentType.Flip)
+                        {
+                            DrawLine(segment, "Flip");
                         }
                         else if (segment.Type == SegmentType.Portal)
                         {

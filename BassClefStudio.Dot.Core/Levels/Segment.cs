@@ -8,21 +8,23 @@ namespace BassClefStudio.Dot.Core.Levels
     public class Segment
     {
         public SegmentType Type { get; }
-        public Vector2 Point1 { get; set; }
-        public Vector2? Point2 { get; set; }
+        public Vector2 Point1 { get; }
+        public Vector2? Point2 { get; }
 
-        public string Id { get; set; }
-        public float? Arg { get; set; }
+        public string Id { get; }
+        public string Arg { get; }
+        public float? ArgNum { get; }
 
-        public Segment(SegmentType type, Vector2 point1, string id = null, float? arg = null)
+        public Segment(SegmentType type, Vector2 point1, string id = null, string arg = null)
         {
             Type = type;
             Point1 = point1;
             Id = id;
             Arg = arg;
+            ArgNum = float.TryParse(Arg, out var f) ? f : (float?)null;
         }
 
-        public Segment(SegmentType type, Vector2 point1, Vector2 point2, string id = null, float? arg = null)
+        public Segment(SegmentType type, Vector2 point1, Vector2 point2, string id = null, string arg = null)
             : this(type, point1, id, arg)
         {
             Point2 = point2;

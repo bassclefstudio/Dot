@@ -31,6 +31,7 @@ namespace BassClefStudio.Dot.Core.Physics
 
         public void SetStartingPos(Level level)
         {
+            Reset();
             var start = level.Segments.FirstOrDefault(s => s.Type == SegmentType.Start);
             if(start != null)
             {
@@ -111,6 +112,7 @@ namespace BassClefStudio.Dot.Core.Physics
             CheckLavaPlatforms(gameState);
             CheckJumpPlatforms(gameState);
             CheckPortals(gameState);
+            CheckFlip(gameState);
             CheckEnd(gameState);
 
             // Manage "ghosts"
@@ -175,7 +177,7 @@ namespace BassClefStudio.Dot.Core.Physics
 
             if (isCollision && !inPortal)
             {
-                var otherPortal = segments.FirstOrDefault(s => s.Type == SegmentType.Portal && int.TryParse(s.Id, out var id) && id == collision.Arg);
+                var otherPortal = segments.FirstOrDefault(s => s.Type == SegmentType.Portal && s.Id == collision.Arg);
                 if (otherPortal != null)
                 {
                     Position = otherPortal.Point1;
@@ -207,6 +209,23 @@ namespace BassClefStudio.Dot.Core.Physics
                 }
             }
             inEnd = isCollision;
+        }
+
+        private bool inFlip;
+        public void CheckFlip(GameState gameState)
+        {
+            var segments = gameState.Map.CurrentLevel.Segments;
+            Segment collision = GetCollision(
+                segments.Where(s => s.Type == SegmentType.Flip),
+                Position,
+                collisionDistance);
+            bool isCollision = collision != null;
+
+            if (isCollision && !inFlip)
+            {
+                Acceleration = Acceleration * new Vector2(1, -1);
+            }
+            inFlip = isCollision;
         }
 
         #endregion
@@ -255,7 +274,7 @@ namespace BassClefStudio.Dot.Core.Physics
 
         private void Jump(float speed)
         {
-            Velocity = (ToHorizontal(Velocity) * new Vector2(1, -1)) + (speed * ToVertical(new Vector2(1, 1)));
+            Velocity = new Vector2(1, -1) * (ToHorizontal(Velocity) + new Vector2(speed * accCos, speed * accSin));
         }
 
         #endregion
@@ -279,12 +298,12 @@ namespace BassClefStudio.Dot.Core.Physics
 
         private Vector2 ToHorizontal(Vector2 xy)
         {
-            return new Vector2(xy.X * Math.Abs(accSin), xy.Y * Math.Abs(accCos));
+            return new Vector2(Math.Abs(accSin), Math.Abs(accCos)) * xy;
         }
 
         private Vector2 ToVertical(Vector2 xy)
         {
-            return new Vector2(xy.X * Math.Abs(accCos), xy.Y * Math.Abs(accSin));
+            return new Vector2(Math.Abs(accCos), Math.Abs(accSin)) * xy;
         }
 
         #endregion

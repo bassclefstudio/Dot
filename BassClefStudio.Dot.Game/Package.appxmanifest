@@ -9,7 +9,7 @@
   <Identity
     Name="6428d0f3-df94-4f59-b11e-c6cb9c175d14"
     Publisher="CN=Decklan Spencer"
-    Version="0.1.0.0" />
+    Version="0.3.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="6428d0f3-df94-4f59-b11e-c6cb9c175d14" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
