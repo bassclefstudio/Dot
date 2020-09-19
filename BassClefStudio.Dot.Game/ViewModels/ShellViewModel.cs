@@ -1,5 +1,5 @@
-﻿using Decklan.UWP.Navigation.DI;
-using Decklan.UWP.Navigation.Shell;
+﻿using BassClefStudio.UWP.Navigation.DI;
+using BassClefStudio.UWP.Navigation.Shell;
 using BassClefStudio.Dot.Game.Views;
 using System;
 using System.Collections.Generic;

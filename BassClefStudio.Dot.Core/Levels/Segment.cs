@@ -38,9 +38,10 @@ namespace BassClefStudio.Dot.Core.Levels
         Bounce = 2,
         Flip = 3,
         Portal = 4,
-        UI = 5,
-        Camera = 6,
-        Start = 7,
-        End = 8
+        Teleport = 5,
+        UI = 6,
+        Camera = 7,
+        Start = 8,
+        End = 9
     }
 }

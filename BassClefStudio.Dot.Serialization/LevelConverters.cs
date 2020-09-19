@@ -1,6 +1,6 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
-using Decklan.Serialization;
-using Decklan.Serialization.Json;
+using BassClefStudio.Serialization;
+using BassClefStudio.Serialization.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

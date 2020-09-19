@@ -1,7 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
+    <Authors>BassClefStudio</Authors>
+    <Version>0.5.2</Version>
+    <Description>Core libraries built on SkiaSharp for the game Dot: Return, a platformer (https://scratch.mit.edu/projects/412149960/).</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\deckl\OneDrive\BassClefStudio Cloud\Development\Dot\BassClefStudio.Dot\BassClefStudio.Dot.Core\BassClefStudio.Dot.Core.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

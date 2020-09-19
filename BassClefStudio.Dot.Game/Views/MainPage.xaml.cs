@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Decklan.UWP.Navigation.DI;
+using BassClefStudio.UWP.Navigation.DI;
 using SkiaSharp.Views.UWP;
 using System.Diagnostics;
 using Windows.UI.Core;

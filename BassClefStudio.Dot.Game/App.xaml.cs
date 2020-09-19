@@ -1,10 +1,16 @@
-﻿using BassClefStudio.Dot.Core;
+﻿using Autofac;
+using BassClefStudio.Dot.Core;
 using BassClefStudio.Dot.Core.Rendering;
 using BassClefStudio.Dot.Game.Views;
+using BassClefStudio.UWP.Lifecycle;
+using BassClefStudio.UWP.Navigation;
+using BassClefStudio.UWP.Navigation.DI;
+using BassClefStudio.UWP.Navigation.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -23,10 +29,32 @@ namespace BassClefStudio.Dot.Game
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Decklan.UWP.ApplicationModel.Application
+    sealed partial class App : UWP.Lifecycle.Application
     {
-        public App() : base(typeof(ShellPage), typeof(MainPage), new Type[] { typeof(GameModule), })
+        public override void BuildContainer(ContainerBuilder builder)
         {
+            builder.AddNavigationService();
+            NavigationService.InitializeContainer(BuildNavigationContainer);
+            builder.RegisterType<LaunchNavigationActivationHandler>().AsImplementedInterfaces();
+        }
+
+        void BuildNavigationContainer(ContainerBuilder builder)
+        {
+            builder.AddViewModels(typeof(App).GetTypeInfo().Assembly);
+            builder.RegisterType<GameState>().SingleInstance();
+            builder.RegisterType<GameRenderer>().SingleInstance();
+        }
+    }
+
+    public class LaunchNavigationActivationHandler : NavigationActivationHandler<LaunchActivatedEventArgs>
+    {
+        public LaunchNavigationActivationHandler(IEnumerable<INavigationHandler> handlers) : base(handlers)
+        { }
+
+        /// <inheritdoc/>
+        public override bool StartNavigation(UWP.Lifecycle.Application app, LaunchActivatedEventArgs args, INavigationHandler handler)
+        {
+            return handler.ActivateWindow(app, typeof(MainPage), args, typeof(ShellPage));
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
-using Decklan.Serialization.DI;
+using BassClefStudio.Serialization.DI;
 using Newtonsoft.Json.Linq;
-using Decklan.Serialization.Json;
+using BassClefStudio.Serialization.Json;
 using Autofac;
 using System.Reflection;
-using Decklan.Serialization;
+using BassClefStudio.Serialization;
 
 namespace BassClefStudio.Dot.Serialization
 {

@@ -38,7 +38,10 @@ namespace BassClefStudio.Dot.Core.Rendering
             AddPaint("Bounce", "Base", new SKColor(200, 200, 0));
             AddPaint("Lava", "Base", new SKColor(255, 80, 80));
             AddPaint("Portal", "Base", new SKColor(160, 0, 200), 16);
+            AddPaint("Teleport", "Base", new SKColor(160, 0, 200), 6);
             AddPaint("Flip", "Base", new SKColor(255, 0, 255), 4);
+            AddPaint("UI", "Base", new SKColor(160, 0, 200), 4);
+            Paints["UI"].Typeface = SKTypeface.Default;
             AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
 
@@ -84,6 +87,40 @@ namespace BassClefStudio.Dot.Core.Rendering
                             Paints[paintKey]);
                     }
 
+                    void WrapLines(string longLine, Vector2 point1, Vector2 point2, SKPaint paint)
+                    {
+                        var wrappedLines = new List<string>();
+                        var lineLength = 0f;
+                        var line = "";
+
+                        float lineLengthLimit = Math.Abs(point2.X - point1.X);
+
+                        foreach (var word in longLine.Split(' '))
+                        {
+                            var wordWithSpace = word + " ";
+                            var wordWithSpaceLength = paint.MeasureText(wordWithSpace);
+                            if (lineLength + wordWithSpaceLength > lineLengthLimit)
+                            {
+                                wrappedLines.Add(line);
+                                line = "" + wordWithSpace;
+                                lineLength = wordWithSpaceLength;
+                            }
+                            else
+                            {
+                                line += wordWithSpace;
+                                lineLength += wordWithSpaceLength;
+                            }
+                        }
+
+                        var x = point1.X;
+                        var y = point1.Y;
+                        foreach (var wrappedLine in wrappedLines)
+                        {
+                            canvas.DrawText(wrappedLine, x, y, paint);
+                            y += paint.FontSpacing;
+                        }
+                    }
+
                     foreach (var segment in gameState.Map.CurrentLevel.Segments)
                     {
                         if (segment.Type == SegmentType.Wall)
@@ -105,6 +142,14 @@ namespace BassClefStudio.Dot.Core.Rendering
                         else if (segment.Type == SegmentType.Portal)
                         {
                             DrawPoint(segment, "Portal");
+                        }
+                        else if (segment.Type == SegmentType.Teleport)
+                        {
+                            DrawLine(segment, "Teleport");
+                        }
+                        else if (segment.Type == SegmentType.UI)
+                        {
+                            WrapLines(segment.Id, segment.Point1, segment.Point2.Value, Paints["UI"]);
                         }
                         else if (segment.Type == SegmentType.End)
                         {

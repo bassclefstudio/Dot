@@ -1,7 +1,5 @@
-﻿using Decklan.UWP.ApplicationModel.Activation;
-using Decklan.UWP.Navigation;
-using Decklan.UWP.Navigation.DI;
-using Decklan.UWP.Services.UI;
+﻿using BassClefStudio.UWP.Navigation;
+using BassClefStudio.UWP.Navigation.DI;
 using BassClefStudio.Dot.Game.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,6 +15,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using BassClefStudio.UWP.Services.Views;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -38,10 +37,6 @@ namespace BassClefStudio.Dot.Game.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             NavigationService.Frame = this.mainFrame;
-            if (e.Parameter is ActivationInfo info)
-            {
-                NavigationService.Navigate(info.ChildPageType, info.Parameter);
-            }
         }
 
         private void NavigationView_BackRequested(Microsoft.UI.Xaml.Controls.NavigationView sender, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs args)

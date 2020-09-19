@@ -1,7 +1,7 @@
 ﻿using BassClefStudio.Dot.Core;
 using BassClefStudio.Dot.Serialization;
-using Decklan.UWP.Core;
-using Decklan.UWP.Navigation.DI;
+using BassClefStudio.UWP.Core;
+using BassClefStudio.UWP.Navigation.DI;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
 ﻿using BassClefStudio.Dot.Game.ViewModels;
-using Decklan.UWP.Navigation.DI;
+using BassClefStudio.UWP.Navigation.DI;
 using System;
 using System.Collections.Generic;
 using System.IO;
