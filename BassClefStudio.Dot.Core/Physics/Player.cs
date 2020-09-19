@@ -169,21 +169,75 @@ namespace BassClefStudio.Dot.Core.Physics
         public void CheckPortals(GameState gameState)
         {
             var segments = gameState.Map.CurrentLevel.Segments;
-            Segment collision = GetCollision(
+            
+            void SetPosAndVel(Segment portal)
+            {
+                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg);
+                if (otherPortal != null)
+                {
+                    //To point portal.
+                    if (otherPortal.Type == SegmentType.Portal)
+                    {
+                        Position = otherPortal.Point1;
+                    }
+                    //To line portal.
+                    else if (otherPortal.Type == SegmentType.Teleport)
+                    {
+                        float angle = 0f;
+                        Vector2 slope = otherPortal.Point2.Value - otherPortal.Point1;
+
+                        //Line to line.
+                        if (portal.Type == SegmentType.Teleport)
+                        {
+                            float u = GetU(Position, portal.Point1, portal.Point2.Value);
+                            Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, u);
+                            angle = GetAngle(portal.Point2.Value - portal.Point1) - GetAngle(slope);
+                        }
+                        //Point to line.
+                        else if (portal.Type == SegmentType.Portal)
+                        {
+                            Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, 0.5f);
+                            angle = ((float)Math.PI / 2) + GetAngle(slope);
+                        }
+
+                        Velocity = Rotate(Velocity, angle);
+                    }
+                }
+            }
+
+            Segment portalCollision = GetCollision(
                 segments.Where(s => s.Type == SegmentType.Portal),
                 Position,
                 collisionDistance * 2);
-            bool isCollision = collision != null;
 
-            if (isCollision && !inPortal)
+            if (portalCollision != null)
             {
-                var otherPortal = segments.FirstOrDefault(s => s.Type == SegmentType.Portal && s.Id == collision.Arg);
-                if (otherPortal != null)
+                if (!inPortal)
                 {
-                    Position = otherPortal.Point1;
+                    SetPosAndVel(portalCollision);
+                }
+                inPortal = true;
+            }
+            else
+            {
+                Segment teleportCollision = GetCollision(
+                    segments.Where(s => s.Type == SegmentType.Teleport),
+                    Position,
+                    collisionDistance);
+
+                if (teleportCollision != null)
+                {
+                    if (!inPortal)
+                    {
+                        SetPosAndVel(teleportCollision);
+                    }
+                    inPortal = true;
+                }
+                else
+                {
+                    inPortal = false;
                 }
             }
-            inPortal = isCollision;
         }
 
         private bool inEnd;
@@ -306,6 +360,28 @@ namespace BassClefStudio.Dot.Core.Physics
             return new Vector2(Math.Abs(accCos), Math.Abs(accSin)) * xy;
         }
 
+        private float GetAngle(Vector2 slope)
+        {
+            if (slope.Y == 0)
+            {
+                return slope.X < 0 ? (float)Math.PI / 2 : (float)-Math.PI / 2;
+            }
+            else
+            {
+                return slope.Y < 0 ? (float)Math.Atan2(slope.Y, slope.X) : (float)(Math.PI + Math.Atan2(slope.Y, slope.X));
+            }
+        }
+
+        private Vector2 GetBetween(Vector2 a, Vector2 b, float u)
+        {
+            return a + u * (b - a);
+        }
+
+        private Vector2 Rotate(Vector2 v, float angle)
+        {
+            return new Vector2((float)((v.X * Math.Cos(angle)) - (v.Y * Math.Sin(angle))), (float)((v.X * Math.Sin(angle)) + (v.Y * Math.Cos(angle))));
+        }
+
         #endregion
         #region Collisions
 
@@ -334,9 +410,14 @@ namespace BassClefStudio.Dot.Core.Physics
             }
         }
 
+        private float GetU(Vector2 point, Vector2 line1, Vector2 line2)
+        {
+            return (((point.X - line1.X) * (line2.X - line1.X)) + ((point.Y - line1.Y) * (line2.Y - line1.Y))) / GetDistanceSquared(line1, line2);
+        }
+
         private float GetDistanceSquared(Vector2 point, Vector2 line1, Vector2 line2)
         {
-            float u = (((point.X - line1.X) * (line2.X - line1.X)) + ((point.Y - line1.Y) * (line2.Y - line1.Y))) / GetDistanceSquared(line1, line2);
+            float u = GetU(point, line1, line2);
             if(u > 1)
             {
                 return GetDistanceSquared(line2, point);

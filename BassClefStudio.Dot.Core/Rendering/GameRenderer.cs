@@ -40,7 +40,7 @@ namespace BassClefStudio.Dot.Core.Rendering
             AddPaint("Portal", "Base", new SKColor(160, 0, 200), 16);
             AddPaint("Teleport", "Base", new SKColor(160, 0, 200), 6);
             AddPaint("Flip", "Base", new SKColor(255, 0, 255), 4);
-            AddPaint("UI", "Base", new SKColor(160, 0, 200), 4);
+            AddPaint("UI", "Base", new SKColor(255, 255, 255), 4);
             Paints["UI"].Typeface = SKTypeface.Default;
             AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
@@ -147,10 +147,10 @@ namespace BassClefStudio.Dot.Core.Rendering
                         {
                             DrawLine(segment, "Teleport");
                         }
-                        else if (segment.Type == SegmentType.UI)
-                        {
-                            WrapLines(segment.Id, segment.Point1, segment.Point2.Value, Paints["UI"]);
-                        }
+                        //else if (segment.Type == SegmentType.UI)
+                        //{
+                        //    WrapLines(segment.Id, segment.Point1, segment.Point2.Value, Paints["UI"]);
+                        //}
                         else if (segment.Type == SegmentType.End)
                         {
                             DrawPoint(segment, "End");
