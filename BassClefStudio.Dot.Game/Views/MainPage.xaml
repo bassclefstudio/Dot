@@ -9,15 +9,11 @@
     mc:Ignorable="d"
     Background="{x:Null}">
     <Grid>
-        <skia:SKXamlCanvas 
-                x:Name="skiaPanel"
-                PaintSurface="OnPaintSurface"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"/>
-        <!--<Viewbox
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Stretch="Uniform">
-        </Viewbox>-->
+        <skia:SKSwapChainPanel 
+            x:Name="skiaPanel"
+            PaintSurface="OnPaintSurface"
+            EnableRenderLoop="True"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"/>
     </Grid>
 </Page>

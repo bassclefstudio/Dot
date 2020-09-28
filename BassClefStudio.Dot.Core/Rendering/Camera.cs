@@ -1,4 +1,5 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
+using BassClefStudio.SkiaSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
 {
-    public class Camera
+    public class Camera : ICamera
     {
         public Vector2 ViewSize { get; private set; }
         public float ViewScale { get; private set; }

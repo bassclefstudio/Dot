@@ -34,49 +34,32 @@ namespace BassClefStudio.Dot.Game.Views
             this.InitializeComponent();
         }
 
-        DispatcherTimer dispatcherTimer;
         public void OnViewModelInitialized()
         {
             Window.Current.CoreWindow.KeyDown += KeyInputOn;
             Window.Current.CoreWindow.KeyUp += KeyInputOff;
             Focus(FocusState.Keyboard);
-
-            dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Interval = new TimeSpan(0,0,0,0,16);
-            dispatcherTimer.Tick += Tick;
-            dispatcherTimer.Start();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             Window.Current.CoreWindow.KeyDown -= KeyInputOn;
             Window.Current.CoreWindow.KeyUp -= KeyInputOff;
-            dispatcherTimer.Stop();
         }
 
-        object physicsLock = new object();
         Stopwatch frameWatch = new Stopwatch();
-        private void Tick(object sender, object e)
+        private void OnPaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
         {
-            lock (physicsLock)
-            {
-                float time = frameWatch.ElapsedMilliseconds / 30f;
-                time = time > 1 ? 1 : time;
-                frameWatch.Restart();
-                ViewModel.Update(time);
-                this.skiaPanel.Invalidate();
-            }
-        }
+            float time = frameWatch.ElapsedMilliseconds / 30f;
+            time = time > 1 ? 1 : time;
+            frameWatch.Restart();
+            ViewModel.Update(time);
 
-        private void OnPaintSurface(object sender, SkiaSharp.Views.UWP.SKPaintSurfaceEventArgs e)
-        {
             // Get canvas and info
             var canvas = e.Surface.Canvas;
-            SKXamlCanvas panel = (sender as SKXamlCanvas);
+            SKSwapChainPanel panel = (sender as SKSwapChainPanel);
             // Draw
             ViewModel.PaintSurface(canvas, panel.CanvasSize);
-            // Save changes.
-            canvas.Flush();
         }
 
         private void KeyInputOn(object sender, KeyEventArgs e)

@@ -1,6 +1,7 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Physics;
 using BassClefStudio.Dot.Core.Rendering;
+using BassClefStudio.SkiaSharp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,14 +15,14 @@ namespace BassClefStudio.Dot.Core
 
         public Player Player { get; }
 
-        public Camera Camera { get; }
+        public Rendering.Camera Camera { get; }
 
         public Inputs Inputs { get; }
 
         public GameState()
         {
             Player = new Player();
-            Camera = new Camera();
+            Camera = new Rendering.Camera();
             Inputs = new Inputs();
         }
 

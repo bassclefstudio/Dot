@@ -28,6 +28,8 @@ namespace BassClefStudio.Dot.Game.ViewModels
         {
             GameState = gameState;
             GameRenderer = renderer;
+            GameRenderer.AttachedContext = GameState;
+            GameRenderer.ViewCamera = GameState.Camera;
         }
 
         public async Task Initialize()
@@ -36,7 +38,7 @@ namespace BassClefStudio.Dot.Game.ViewModels
         public void PaintSurface(SKCanvas canvas, SKSize canvasSize)
         {
             GameState.Camera.SetView(new Vector2(canvasSize.Width, canvasSize.Height), 4);
-            GameRenderer.Render(GameState, canvas);
+            GameRenderer.Render(canvas);
         }
 
         public void Update(float deltaFrames)

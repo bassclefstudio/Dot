@@ -1,5 +1,6 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Physics;
+using BassClefStudio.SkiaSharp.Helpers;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,8 @@ using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
 {
-    public class GameRenderer : IDisposable
+    public class GameRenderer : RenderService<GameState>
     {
-        private Dictionary<string, SKPaint> Paints = new Dictionary<string, SKPaint>();
-
         public GameRenderer()
         {
             Paints.Add("Base", new SKPaint()
@@ -45,26 +44,16 @@ namespace BassClefStudio.Dot.Core.Rendering
             AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
 
-        public void Render(GameState gameState, SKCanvas canvas)
+        protected override IEnumerable<SelectionRegion> GetSelectionRegions()
         {
-            canvas.Clear();
-            float viewScale = gameState.Camera.ViewScale;
-            Vector2 canvasSize = gameState.Camera.ViewSize;
-            canvas.Scale(viewScale, -viewScale);
-            float width = canvasSize.X / (2 * viewScale);
-            float height = canvasSize.Y / (2 * viewScale);
-            canvas.Translate(width, -height);
+            throw new NotImplementedException();
+        }
 
-            SKRect boundingRect = new SKRect(-width, height, width, -height);
-            canvas.ClipRect(boundingRect, SKClipOperation.Intersect, true);
-            //canvas.DrawRect(boundingRect, Paints["Border"]);
-
-            if (gameState.Map != null)
+        protected override void RenderInternal(SKCanvas canvas)
+        {
+            if (AttachedContext.Map != null)
             {
-                canvas.Scale(gameState.Camera.CameraScale);
-                canvas.Translate(-gameState.Camera.CameraPosition.X, -gameState.Camera.CameraPosition.Y);
-
-                if (gameState.Map.CurrentLevel != null)
+                if (AttachedContext.Map.CurrentLevel != null)
                 {
                     void DrawLine(Segment segment, string paintKey)
                     {
@@ -121,7 +110,7 @@ namespace BassClefStudio.Dot.Core.Rendering
                         }
                     }
 
-                    foreach (var segment in gameState.Map.CurrentLevel.Segments)
+                    foreach (var segment in AttachedContext.Map.CurrentLevel.Segments)
                     {
                         if (segment.Type == SegmentType.Wall)
                         {
@@ -158,28 +147,20 @@ namespace BassClefStudio.Dot.Core.Rendering
                     }
 
                     byte alpha = 0;
-                    for (int i = 0; i < gameState.Player.Ghosts.Count; i++)
+                    for (int i = 0; i < AttachedContext.Player.Ghosts.Count; i++)
                     {
-                        alpha += (byte)(255 / gameState.Player.Ghosts.Count);
+                        alpha += (byte)(255 / AttachedContext.Player.Ghosts.Count);
                         SKPaint ghostPaint = Paints["Player"].Clone();
-                        ghostPaint.StrokeWidth = (i + 1) * (12 / gameState.Player.Ghosts.Count);
+                        ghostPaint.StrokeWidth = (i + 1) * (12 / AttachedContext.Player.Ghosts.Count);
                         ghostPaint.Color = new SKColor(255, 255, 255, alpha);
 
-                        Vector2 ghostPos = gameState.Player.Ghosts[i];
+                        Vector2 ghostPos = AttachedContext.Player.Ghosts[i];
                         canvas.DrawPoint(ghostPos.X, ghostPos.Y, ghostPaint);
                     }
 
-                    Vector2 playerPos = gameState.Player.Position;
+                    Vector2 playerPos = AttachedContext.Player.Position;
                     canvas.DrawPoint(playerPos.X, playerPos.Y, Paints["Player"]);
                 }
-            }
-        }
-
-        public void Dispose()
-        {
-            foreach (var paint in Paints)
-            {
-                paint.Value.Dispose();
             }
         }
     }
