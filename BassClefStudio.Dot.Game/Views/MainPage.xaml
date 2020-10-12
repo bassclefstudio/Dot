@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:skia="using:SkiaSharp.Views.UWP" xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{ThemeResource SystemChromeMediumColor}">
+    Background="{ThemeResource SystemChromeMediumLowColor}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
         <Grid
             x:Name="titleBar"
-            Background="{ThemeResource SystemChromeMediumLowColor}">
+            Background="{ThemeResource SystemChromeMediumColor}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>

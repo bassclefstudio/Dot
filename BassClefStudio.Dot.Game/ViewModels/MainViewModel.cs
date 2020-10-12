@@ -44,7 +44,9 @@ namespace BassClefStudio.Dot.Game.ViewModels
         public ICommand PlayDefaultCommand { get; }
 
         public async Task Initialize()
-        { }
+        {
+            await PlayDefault();
+        }
 
         public void PaintSurface(SKCanvas canvas, SKSize canvasSize)
         {
