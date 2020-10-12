@@ -54,7 +54,7 @@ namespace BassClefStudio.Dot.Game
         /// <inheritdoc/>
         public override bool StartNavigation(UWP.Lifecycle.Application app, LaunchActivatedEventArgs args, INavigationHandler handler)
         {
-            return handler.ActivateWindow(app, typeof(MainPage), args, typeof(ShellPage));
+            return handler.ActivateWindow(app, typeof(MainPage), args);
         }
     }
 }

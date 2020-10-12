@@ -116,8 +116,8 @@ namespace BassClefStudio.Dot.Core.Physics
             CheckEnd(gameState);
 
             // Manage "ghosts"
-            frame += deltaFrames;
-            if (frame > 0.5f)
+            frame += 1;
+            if (frame == 2)
             {
                 frame = 0;
                 if(Ghosts.Count > maxGhosts)
