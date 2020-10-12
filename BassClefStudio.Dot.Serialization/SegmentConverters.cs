@@ -31,7 +31,7 @@ namespace BassClefStudio.Dot.Serialization
 
             if (item.ArgNum.HasValue)
             {
-                properties.Add(new JProperty("Args", item.Arg));
+                properties.Add(new JProperty("Arg1", item.Arg1));
             }
 
             return new JObject(properties);
@@ -46,7 +46,7 @@ namespace BassClefStudio.Dot.Serialization
         {
             Vector2 point1 = new Vector2((float)item["X1"], (float)item["Y1"]);
             string id = (string)item["Id"];
-            string arg = (string)item["Args"];
+            string arg = (string)item["Arg1"];
             SegmentType type = (SegmentType)Enum.Parse(typeof(SegmentType), (string)item["Type"]);
 
             if ((item as JObject).ContainsKey("Y2"))

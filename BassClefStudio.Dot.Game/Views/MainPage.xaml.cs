@@ -17,6 +17,7 @@ using BassClefStudio.UWP.Navigation.DI;
 using SkiaSharp.Views.UWP;
 using System.Diagnostics;
 using Windows.UI.Core;
+using BassClefStudio.UWP.Services.Views;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,6 +37,7 @@ namespace BassClefStudio.Dot.Game.Views
 
         public void OnViewModelInitialized()
         {
+            TitleBarService.HideTitleBar(this.titleBar, this.loadingBar);
             Window.Current.CoreWindow.KeyDown += KeyInputOn;
             Window.Current.CoreWindow.KeyUp += KeyInputOff;
             Focus(FocusState.Keyboard);

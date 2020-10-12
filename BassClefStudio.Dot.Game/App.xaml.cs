@@ -6,6 +6,7 @@ using BassClefStudio.UWP.Lifecycle;
 using BassClefStudio.UWP.Navigation;
 using BassClefStudio.UWP.Navigation.DI;
 using BassClefStudio.UWP.Navigation.Extensions;
+using BassClefStudio.UWP.Services.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +44,7 @@ namespace BassClefStudio.Dot.Game
             builder.AddViewModels(typeof(App).GetTypeInfo().Assembly);
             builder.RegisterType<GameState>().SingleInstance();
             builder.RegisterType<GameRenderer>().SingleInstance();
+            builder.AddStatusBarService();
         }
     }
 

@@ -5,15 +5,57 @@
     xmlns:local="using:BassClefStudio.Dot.Game.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:skia="using:SkiaSharp.Views.UWP"
+    xmlns:skia="using:SkiaSharp.Views.UWP" xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    Background="{x:Null}">
+    Background="{ThemeResource SystemChromeMediumColor}">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid
+            x:Name="titleBar"
+            Background="{ThemeResource SystemChromeMediumLowColor}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock
+                x:Uid="/Shell/AppTitle"
+                Grid.Row="1"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                VerticalAlignment="Center"
+                Margin="8,0,0,0"/>
+            <winui:ProgressBar
+                x:Name="loadingBar"
+                Grid.Row="1"
+                VerticalAlignment="Top"
+                IsIndeterminate="True"
+                Visibility="Collapsed"/>
+        </Grid>
         <skia:SKSwapChainPanel 
             x:Name="skiaPanel"
+            Grid.Row="1"
             PaintSurface="OnPaintSurface"
             EnableRenderLoop="True"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"/>
+        <CommandBar
+            Grid.Row="2"
+            DefaultLabelPosition="Right"
+            ClosedDisplayMode="Minimal">
+            <CommandBar.PrimaryCommands>
+                <AppBarButton 
+                    Icon="OpenFile" 
+                    x:Uid="/Shell/OpenFile"
+                    Command="{x:Bind ViewModel.OpenCommand}"/>
+                <AppBarButton
+                    Icon="Play"
+                    x:Uid="/Shell/PlayFile"
+                    Command="{x:Bind ViewModel.PlayDefaultCommand}"/>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
     </Grid>
 </Page>

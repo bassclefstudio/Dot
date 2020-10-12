@@ -172,7 +172,7 @@ namespace BassClefStudio.Dot.Core.Physics
             
             void SetPosAndVel(Segment portal)
             {
-                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg);
+                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg1);
                 if (otherPortal != null)
                 {
                     //To point portal.

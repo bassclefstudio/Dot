@@ -59,17 +59,17 @@ namespace BassClefStudio.Dot.Core.Rendering
             else
             {
                 Bounds bounds = new Bounds(region.Point1, region.Point2.Value);
-                if (region.Id == "Fixed")
+                if (region.Arg1 == "Fixed")
                 {
                     float zoom = region.ArgNum ?? MinZoom(bounds);
                     LerpCamera(bounds.Center(), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Id == "Bound")
+                else if (region.Arg1 == "Bound")
                 {
                     float zoom = region.ArgNum ?? FullZoom(bounds);
                     LerpCamera(BoundPosition(gameState.Player.Position, bounds, zoom), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Id == "View")
+                else if (region.Arg1 == "View")
                 {
                     float zoom = region.ArgNum ?? FullZoom(bounds);
                     LerpCamera(gameState.Player.Position, zoom, lerpSpeed / deltaFrames);
