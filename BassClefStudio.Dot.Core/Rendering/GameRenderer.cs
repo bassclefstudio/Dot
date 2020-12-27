@@ -12,8 +12,14 @@ using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
 {
+    /// <summary>
+    /// A <see cref="RenderService{T}"/> for the Dot <see cref="GameState"/>.
+    /// </summary>
     public class GameRenderer : RenderService<GameState>
     {
+        /// <summary>
+        /// Creates a new <see cref="GameRenderer"/> object.
+        /// </summary>
         public GameRenderer()
         {
             Paints.Add("Base", new SKPaint()
@@ -31,6 +37,8 @@ namespace BassClefStudio.Dot.Core.Rendering
                 Paints.Add(name, paint);
             }
 
+            AddPaint("Background", "Base", new SKColor(40, 40, 40), 4);
+            Paints["Background"].Style = SKPaintStyle.Fill;
             AddPaint("Border", "Base", new SKColor(255, 255, 255), 4);
             AddPaint("Player", "Base", new SKColor(255, 255, 255), 12);
             AddPaint("Wall", "Base", new SKColor(255, 255, 255));
@@ -44,13 +52,16 @@ namespace BassClefStudio.Dot.Core.Rendering
             AddPaint("End", "Base", new SKColor(100, 255, 100), 16);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<SelectionRegion> GetSelectionRegions()
         {
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         protected override void RenderInternal(SKCanvas canvas)
         {
+            canvas.DrawRect(canvas.LocalClipBounds, Paints["Background"]);
             if (AttachedContext.Map != null)
             {
                 if (AttachedContext.Map.CurrentLevel != null)

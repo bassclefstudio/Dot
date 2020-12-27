@@ -117,7 +117,7 @@ namespace BassClefStudio.Dot.Core.Physics
 
             // Manage "ghosts"
             frame += 1;
-            if (frame == 2)
+            if (frame >= 1)
             {
                 frame = 0;
                 if(Ghosts.Count > maxGhosts)
@@ -368,7 +368,7 @@ namespace BassClefStudio.Dot.Core.Physics
             }
             else
             {
-                return slope.Y < 0 ? (float)Math.Atan2(slope.Y, slope.X) : (float)(Math.PI + Math.Atan2(slope.Y, slope.X));
+                return slope.Y < 0 ? (float)Math.Atan(slope.X / slope.Y) : (float)(Math.PI + Math.Atan(slope.X / slope.Y));
             }
         }
 

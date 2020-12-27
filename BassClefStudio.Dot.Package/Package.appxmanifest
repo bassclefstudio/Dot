@@ -9,7 +9,7 @@
   <Identity
     Name="29071DecklanSpencer.DotAPlatformer"
     Publisher="CN=6FDD8824-9D27-4392-8B8A-3D173E884B6C"
-    Version="1.8.0.0" />
+    Version="1.8.3.0" />
 
   <Properties>
     <DisplayName>Dot: A Platformer</DisplayName>
