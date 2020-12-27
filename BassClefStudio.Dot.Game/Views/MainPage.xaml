@@ -44,6 +44,7 @@
             VerticalAlignment="Stretch"/>-->
         <win2d:CanvasAnimatedControl
             x:Name="win2dPanel"
+            Grid.Row="1"
             Update="GameUpdate"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">

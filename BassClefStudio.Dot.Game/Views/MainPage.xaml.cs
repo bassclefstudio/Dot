@@ -20,6 +20,8 @@ using Windows.UI.Core;
 using BassClefStudio.UWP.Services.Views;
 using BassClefStudio.TurtleGraphics;
 using BassClefStudio.TurtleGraphics.Win2D;
+using BassClefStudio.NET.Core;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -45,7 +47,18 @@ namespace BassClefStudio.Dot.Game.Views
             Focus(FocusState.Keyboard);
 
             ITurtleGraphicsView graphicsView = new Win2DTurtleGraphicsView(this.win2dPanel);
-            ViewModel.GraphicsView = graphicsView;
+            graphicsView.UpdateRequested += GraphicsView_UpdateRequested;
+            ViewModel.LoadingChanged += ViewModel_LoadingChanged;
+        }
+
+        private void GraphicsView_UpdateRequested(object sender, UpdateRequestEventArgs e)
+        {
+            ViewModel.Draw(e);
+        }
+
+        private void ViewModel_LoadingChanged(object sender, EventArgs e)
+        {
+            win2dPanel.Paused = ViewModel.Loading;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

@@ -11,7 +11,6 @@ using BassClefStudio.Dot.Core.Physics;
 using BassClefStudio.Dot.Core.Rendering;
 using BassClefStudio.Dot.Serialization;
 using BassClefStudio.NET.Core;
-using BassClefStudio.NET.Serialization;
 using BassClefStudio.TurtleGraphics;
 using BassClefStudio.UWP.Core;
 using BassClefStudio.UWP.Navigation.DI;
@@ -31,8 +30,6 @@ namespace BassClefStudio.Dot.Game.ViewModels
 
         public IStatusBarService StatusBarService { get; }
 
-        public ITurtleGraphicsView GraphicsView { get; set; }
-
         public MainViewModel(GameState gameState, GameRenderer renderer, IStatusBarService statusBarService)
         {
             GameState = gameState;
@@ -51,6 +48,11 @@ namespace BassClefStudio.Dot.Game.ViewModels
         public async Task Initialize()
         {
             await PlayDefault();
+        }
+
+        public void Draw(UpdateRequestEventArgs e)
+        {
+            GameRenderer.Render(e.GraphicsProvider, e.ViewSize ?? Vector2.Zero);
         }
 
         public void Update(float deltaFrames)
@@ -76,8 +78,13 @@ namespace BassClefStudio.Dot.Game.ViewModels
             await StatusBarService.StopAsync();
         }
 
+        private bool loading;
+        public bool Loading { get => loading; set { Set(ref loading, value); LoadingChanged?.Invoke(this, new EventArgs()); } }
+        public event EventHandler LoadingChanged;
+
         public async Task PlayDefault()
         {
+            Loading = true;
             await StatusBarService.StartAsync();
             var installData = await Windows.ApplicationModel.Package.Current.InstalledLocation.GetFileAsync("Data\\Game.json");
             using (JsonGameService serializerService = new JsonGameService())
@@ -89,6 +96,7 @@ namespace BassClefStudio.Dot.Game.ViewModels
                 }
             }
             await StatusBarService.StopAsync();
+            Loading = false;
         }
     }
 }

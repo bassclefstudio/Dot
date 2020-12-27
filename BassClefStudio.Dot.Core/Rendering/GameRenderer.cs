@@ -34,17 +34,18 @@ namespace BassClefStudio.Dot.Core.Rendering
                 { "Wall", new Color(255,255,255) },
                 { "Lava", new Color(255,0,0) },
                 { "Bounce", new Color(200,200,0) },
-                { "Flip", new Color(255,180,255) },
-                { "Portal", new Color(40,40,80) },
-                { "Teleport", new Color(40,40,80) },
-                { "End", new Color(200,255,200) },
+                { "Flip", new Color(255,40,255) },
+                { "Portal", new Color(200,200,255) },
+                { "Teleport", new Color(200,200,255) },
+                { "End", new Color(100,255,100) },
+                { "Player", new Color(255,255,255) }
             };
         }
 
         public void Render(ITurtleGraphicsProvider graphics, Vector2 viewSize)
         {
             graphics.SetView(viewSize, new Vector2(480, 360), ZoomType.FitAll, CoordinateStyle.Center);
-            graphics.PenSize = 8;
+            graphics.PenSize = 10;
             graphics.FillRectangle(Vector2.Zero, viewSize, Paints["Background"]);
             if (GameState.Map != null)
             {
@@ -55,15 +56,18 @@ namespace BassClefStudio.Dot.Core.Rendering
                         Vector2 p1 = segment.Point1;
                         Vector2 p2 = segment.Point2.Value;
                         graphics.DrawLine(
-                            segment.Point1,
-                            segment.Point2.Value,
+                            segment.Point1 - ViewCamera.CameraPosition,
+                            segment.Point2.Value - ViewCamera.CameraPosition,
                             Paints[paintKey]);
+                        graphics.FillEllipse(segment.Point1 - ViewCamera.CameraPosition, new Vector2(graphics.PenSize / 2), Paints[paintKey]);
+                        graphics.FillEllipse(segment.Point2.Value - ViewCamera.CameraPosition, new Vector2(graphics.PenSize / 2), Paints[paintKey]);
+
                     }
 
                     void DrawPoint(Segment segment, float size, string paintKey)
                     {
                         graphics.FillEllipse(
-                            segment.Point1,
+                            segment.Point1 - ViewCamera.CameraPosition,
                             new Vector2(size, size),
                             Paints[paintKey]);
                     }
@@ -88,7 +92,7 @@ namespace BassClefStudio.Dot.Core.Rendering
                         }
                         else if (segment.Type == SegmentType.Portal)
                         {
-                            DrawPoint(segment, 12, "Portal");
+                            DrawPoint(segment, 8, "Portal");
                         }
                         else if (segment.Type == SegmentType.Teleport)
                         {
@@ -100,7 +104,7 @@ namespace BassClefStudio.Dot.Core.Rendering
                         //}
                         else if (segment.Type == SegmentType.End)
                         {
-                            DrawPoint(segment, 12, "End");
+                            DrawPoint(segment, 8, "End");
                         }
                     }
 
@@ -108,16 +112,17 @@ namespace BassClefStudio.Dot.Core.Rendering
                     for (int i = 0; i < GameState.Player.Ghosts.Count; i++)
                     {
                         alpha += (byte)(255 / GameState.Player.Ghosts.Count);
-                        var ghostWidth = (i + 1) * (12 / GameState.Player.Ghosts.Count);
+                        var ghostWidth = (i + 1) * (6 / GameState.Player.Ghosts.Count);
                         var ghostColor = new Color(255, 255, 255, alpha);
 
                         Vector2 ghostPos = GameState.Player.Ghosts[i];
-                        graphics.DrawEllipse(ghostPos, new Vector2(ghostWidth, ghostWidth), ghostColor);
+                        graphics.FillEllipse(ghostPos - ViewCamera.CameraPosition, new Vector2(ghostWidth, ghostWidth), ghostColor);
                     }
 
                     Vector2 playerPos = GameState.Player.Position;
-                    graphics.DrawEllipse(new Vector2(playerPos.X, playerPos.Y), new Vector2(12, 12), Paints["Player"]);
+                    graphics.FillEllipse(playerPos - ViewCamera.CameraPosition, new Vector2(4, 4), Paints["Player"]);
                 }
+                _ = graphics.FlushAsync();
             }
         }
     }
