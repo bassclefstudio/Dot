@@ -5,7 +5,7 @@
     xmlns:local="using:BassClefStudio.Dot.Game.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:skia="using:SkiaSharp.Views.UWP" xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:skia="using:SkiaSharp.Views.UWP" xmlns:winui="using:Microsoft.UI.Xaml.Controls" xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
     mc:Ignorable="d"
     Background="{ThemeResource SystemChromeMediumLowColor}">
     <Grid>
@@ -35,13 +35,19 @@
                 IsIndeterminate="True"
                 Visibility="Collapsed"/>
         </Grid>
-        <skia:SKSwapChainPanel 
+        <!--<skia:SKSwapChainPanel 
             x:Name="skiaPanel"
             Grid.Row="1"
             PaintSurface="OnPaintSurface"
             EnableRenderLoop="True"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"/>
+            VerticalAlignment="Stretch"/>-->
+        <win2d:CanvasAnimatedControl
+            x:Name="win2dPanel"
+            Update="GameUpdate"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+        </win2d:CanvasAnimatedControl>
         <CommandBar
             Grid.Row="2"
             DefaultLabelPosition="Right"

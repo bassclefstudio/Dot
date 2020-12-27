@@ -12,7 +12,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.15063.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -195,7 +195,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BassClefStudio.Serialization">
-      <Version>1.1.0</Version>
+      <Version>1.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="BassClefStudio.TurtleGraphics">
+      <Version>0.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="BassClefStudio.TurtleGraphics.Win2D">
+      <Version>0.2.1</Version>
     </PackageReference>
     <PackageReference Include="BassClefStudio.UWP.Core">
       <Version>2.0.1</Version>
@@ -240,7 +246,7 @@
       <Name>BassClefStudio.Dot.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\BassClefStudio.Dot.Serialization\BassClefStudio.Dot.Serialization.csproj">
-      <Project>{8cc62e71-c202-42e2-ae9c-83adf3066611}</Project>
+      <Project>{8f281792-f827-48c3-9075-25903bf8de42}</Project>
       <Name>BassClefStudio.Dot.Serialization</Name>
     </ProjectReference>
   </ItemGroup>

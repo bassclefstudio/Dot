@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using BassClefStudio.Dot.Core;
 using BassClefStudio.Dot.Core.Levels;
+using BassClefStudio.Dot.Core.Physics;
 using BassClefStudio.Dot.Core.Rendering;
 using BassClefStudio.Dot.Serialization;
 using BassClefStudio.NET.Core;
+using BassClefStudio.NET.Serialization;
+using BassClefStudio.TurtleGraphics;
 using BassClefStudio.UWP.Core;
 using BassClefStudio.UWP.Navigation.DI;
 using BassClefStudio.UWP.Services.Views;
@@ -28,13 +31,15 @@ namespace BassClefStudio.Dot.Game.ViewModels
 
         public IStatusBarService StatusBarService { get; }
 
+        public ITurtleGraphicsView GraphicsView { get; set; }
+
         public MainViewModel(GameState gameState, GameRenderer renderer, IStatusBarService statusBarService)
         {
             GameState = gameState;
             GameRenderer = renderer;
             StatusBarService = statusBarService;
 
-            GameRenderer.AttachedContext = GameState;
+            GameRenderer.GameState = GameState;
             GameRenderer.ViewCamera = GameState.Camera;
             OpenCommand = new RelayCommandBuilder(ImportFile).Command;
             PlayDefaultCommand = new RelayCommandBuilder(PlayDefault).Command;
@@ -46,12 +51,6 @@ namespace BassClefStudio.Dot.Game.ViewModels
         public async Task Initialize()
         {
             await PlayDefault();
-        }
-
-        public void PaintSurface(SKCanvas canvas, SKSize canvasSize)
-        {
-            GameState.Camera.SetView(new Vector2(canvasSize.Width, canvasSize.Height), 4);
-            GameRenderer.Render(canvas);
         }
 
         public void Update(float deltaFrames)

@@ -24,7 +24,7 @@ namespace BassClefStudio.Dot.Gtk
             GameState = gameState;
             GameRenderer = renderer;
 
-            GameRenderer.AttachedContext = GameState;
+            GameRenderer.GameState = GameState;
             GameRenderer.ViewCamera = GameState.Camera;
             SynchronousTask initTask = new SynchronousTask(PlayDefault);
             initTask.RunTask();

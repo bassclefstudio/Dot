@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.4</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>BassClefStudio</Authors>
     <Version>0.5.2</Version>
     <Description>Core libraries built on SkiaSharp for the game Dot: Return, a platformer (https://scratch.mit.edu/projects/412149960/).</Description>
@@ -13,8 +13,9 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="BassClefStudio.SkiaSharp.Helpers" Version="1.6.0" />
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="BassClefStudio.NET.Core" Version="1.5.1" />
+    <PackageReference Include="BassClefStudio.NET.Serialization" Version="2.2.0" />
+    <PackageReference Include="BassClefStudio.TurtleGraphics" Version="0.2.1" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
