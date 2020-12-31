@@ -10,8 +10,9 @@ using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Physics;
 using BassClefStudio.Dot.Core.Rendering;
 using BassClefStudio.Dot.Serialization;
+using BassClefStudio.Graphics.Core;
+using BassClefStudio.Graphics.Turtle;
 using BassClefStudio.NET.Core;
-using BassClefStudio.TurtleGraphics;
 using BassClefStudio.UWP.Core;
 using BassClefStudio.UWP.Navigation.DI;
 using BassClefStudio.UWP.Services.Views;
@@ -52,7 +53,7 @@ namespace BassClefStudio.Dot.Game.ViewModels
 
         public void Draw(UpdateRequestEventArgs e)
         {
-            GameRenderer.Render(e.GraphicsProvider, e.ViewSize ?? Vector2.Zero);
+            GameRenderer.Render(e.GraphicsProvider as ITurtleGraphicsProvider, e.ViewSize ?? Vector2.Zero);
         }
 
         public void Update(float deltaFrames)

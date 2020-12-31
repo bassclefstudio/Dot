@@ -1,7 +1,8 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
 using BassClefStudio.Dot.Core.Physics;
+using BassClefStudio.Graphics.Core;
+using BassClefStudio.Graphics.Turtle;
 using BassClefStudio.NET.Core.Primitives;
-using BassClefStudio.TurtleGraphics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,7 +31,7 @@ namespace BassClefStudio.Dot.Core.Rendering
         {
             Paints = new Dictionary<string, Color>()
             {
-                { "Background", new Color(40,40,40) },
+                { "Background", new Color(0,200,0) },
                 { "Wall", new Color(255,255,255) },
                 { "Lava", new Color(255,0,0) },
                 { "Bounce", new Color(200,200,0) },
@@ -44,9 +45,8 @@ namespace BassClefStudio.Dot.Core.Rendering
 
         public void Render(ITurtleGraphicsProvider graphics, Vector2 viewSize)
         {
-            graphics.SetView(viewSize, new Vector2(480, 360), ZoomType.FitAll, CoordinateStyle.Center);
+            graphics.Camera = ViewCamera.GetGraphicsCamera(viewSize);
             graphics.PenSize = 10;
-            graphics.FillRectangle(Vector2.Zero, viewSize, Paints["Background"]);
             if (GameState.Map != null)
             {
                 if (GameState.Map.CurrentLevel != null)
@@ -56,18 +56,15 @@ namespace BassClefStudio.Dot.Core.Rendering
                         Vector2 p1 = segment.Point1;
                         Vector2 p2 = segment.Point2.Value;
                         graphics.DrawLine(
-                            segment.Point1 - ViewCamera.CameraPosition,
-                            segment.Point2.Value - ViewCamera.CameraPosition,
+                            segment.Point1,
+                            segment.Point2.Value,
                             Paints[paintKey]);
-                        graphics.FillEllipse(segment.Point1 - ViewCamera.CameraPosition, new Vector2(graphics.PenSize / 2), Paints[paintKey]);
-                        graphics.FillEllipse(segment.Point2.Value - ViewCamera.CameraPosition, new Vector2(graphics.PenSize / 2), Paints[paintKey]);
-
                     }
 
                     void DrawPoint(Segment segment, float size, string paintKey)
                     {
                         graphics.FillEllipse(
-                            segment.Point1 - ViewCamera.CameraPosition,
+                            segment.Point1,
                             new Vector2(size, size),
                             Paints[paintKey]);
                     }
@@ -116,11 +113,11 @@ namespace BassClefStudio.Dot.Core.Rendering
                         var ghostColor = new Color(255, 255, 255, alpha);
 
                         Vector2 ghostPos = GameState.Player.Ghosts[i];
-                        graphics.FillEllipse(ghostPos - ViewCamera.CameraPosition, new Vector2(ghostWidth, ghostWidth), ghostColor);
+                        graphics.FillEllipse(ghostPos, new Vector2(ghostWidth, ghostWidth), ghostColor);
                     }
 
                     Vector2 playerPos = GameState.Player.Position;
-                    graphics.FillEllipse(playerPos - ViewCamera.CameraPosition, new Vector2(4, 4), Paints["Player"]);
+                    graphics.FillEllipse(playerPos, new Vector2(4, 4), Paints["Player"]);
                 }
                 _ = graphics.FlushAsync();
             }

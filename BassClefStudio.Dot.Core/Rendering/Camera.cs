@@ -1,4 +1,5 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
+using BassClefStudio.Graphics.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,13 @@ namespace BassClefStudio.Dot.Core.Rendering
 
             ViewSize = new Vector2(480, 360);
             ViewScale = 1;
+        }
+
+        public ViewCamera GetGraphicsCamera(Vector2 viewSize)
+        {
+            var viewCamera = new ViewCamera(viewSize, new Vector2(480, 360), ZoomType.FitAll, true);
+            var drawCamera = new ViewCamera(CameraScale, CameraPosition);
+            return drawCamera + viewCamera;
         }
 
         #region Movement

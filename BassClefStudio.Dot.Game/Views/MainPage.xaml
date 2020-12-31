@@ -35,20 +35,12 @@
                 IsIndeterminate="True"
                 Visibility="Collapsed"/>
         </Grid>
-        <!--<skia:SKSwapChainPanel 
-            x:Name="skiaPanel"
-            Grid.Row="1"
-            PaintSurface="OnPaintSurface"
-            EnableRenderLoop="True"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"/>-->
         <win2d:CanvasAnimatedControl
             x:Name="win2dPanel"
-            Grid.Row="1"
             Update="GameUpdate"
+            Grid.Row="1"
             HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
-        </win2d:CanvasAnimatedControl>
+            VerticalAlignment="Stretch"/>
         <CommandBar
             Grid.Row="2"
             DefaultLabelPosition="Right"

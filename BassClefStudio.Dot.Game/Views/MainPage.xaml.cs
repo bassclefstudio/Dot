@@ -18,10 +18,9 @@ using SkiaSharp.Views.UWP;
 using System.Diagnostics;
 using Windows.UI.Core;
 using BassClefStudio.UWP.Services.Views;
-using BassClefStudio.TurtleGraphics;
-using BassClefStudio.TurtleGraphics.Win2D;
 using BassClefStudio.NET.Core;
 using System.Threading.Tasks;
+using BassClefStudio.Graphics.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -44,9 +43,9 @@ namespace BassClefStudio.Dot.Game.Views
             TitleBarService.HideTitleBar(this.titleBar, this.loadingBar);
             Window.Current.CoreWindow.KeyDown += KeyInputOn;
             Window.Current.CoreWindow.KeyUp += KeyInputOff;
-            Focus(FocusState.Keyboard);
+            this.win2dPanel.Focus(FocusState.Pointer);
 
-            ITurtleGraphicsView graphicsView = new Win2DTurtleGraphicsView(this.win2dPanel);
+            IGraphicsView graphicsView = new Win2DGraphicsView(this.win2dPanel);
             graphicsView.UpdateRequested += GraphicsView_UpdateRequested;
             ViewModel.LoadingChanged += ViewModel_LoadingChanged;
         }
