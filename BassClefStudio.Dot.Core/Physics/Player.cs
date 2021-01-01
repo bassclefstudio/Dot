@@ -115,9 +115,10 @@ namespace BassClefStudio.Dot.Core.Physics
             CheckFlip(gameState);
             CheckEnd(gameState);
 
-            // Manage "ghosts"
-            frame += deltaFrames;
-            if (frame > 0.5f)
+            //// Manage "ghosts"
+            frame += 1;
+            //// Run at 60fps (1 ghost per 2 frames)
+            if (frame >= 2)
             {
                 frame = 0;
                 if(Ghosts.Count > maxGhosts)
@@ -172,7 +173,7 @@ namespace BassClefStudio.Dot.Core.Physics
             
             void SetPosAndVel(Segment portal)
             {
-                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg);
+                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg1);
                 if (otherPortal != null)
                 {
                     //To point portal.
@@ -368,7 +369,7 @@ namespace BassClefStudio.Dot.Core.Physics
             }
             else
             {
-                return slope.Y < 0 ? (float)Math.Atan2(slope.Y, slope.X) : (float)(Math.PI + Math.Atan2(slope.Y, slope.X));
+                return slope.Y < 0 ? (float)Math.Atan(slope.X / slope.Y) : (float)(Math.PI + Math.Atan(slope.X / slope.Y));
             }
         }
 

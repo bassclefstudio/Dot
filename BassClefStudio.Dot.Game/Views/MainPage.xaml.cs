@@ -17,6 +17,10 @@ using BassClefStudio.UWP.Navigation.DI;
 using SkiaSharp.Views.UWP;
 using System.Diagnostics;
 using Windows.UI.Core;
+using BassClefStudio.UWP.Services.Views;
+using BassClefStudio.NET.Core;
+using System.Threading.Tasks;
+using BassClefStudio.Graphics.Core;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -36,30 +40,30 @@ namespace BassClefStudio.Dot.Game.Views
 
         public void OnViewModelInitialized()
         {
+            TitleBarService.HideTitleBar(this.titleBar, this.loadingBar);
             Window.Current.CoreWindow.KeyDown += KeyInputOn;
             Window.Current.CoreWindow.KeyUp += KeyInputOff;
-            Focus(FocusState.Keyboard);
+            this.win2dPanel.Focus(FocusState.Pointer);
+
+            IGraphicsView graphicsView = new Win2DGraphicsView(this.win2dPanel);
+            graphicsView.UpdateRequested += GraphicsView_UpdateRequested;
+            ViewModel.LoadingChanged += ViewModel_LoadingChanged;
+        }
+
+        private void GraphicsView_UpdateRequested(object sender, UpdateRequestEventArgs e)
+        {
+            ViewModel.Draw(e);
+        }
+
+        private void ViewModel_LoadingChanged(object sender, EventArgs e)
+        {
+            win2dPanel.Paused = ViewModel.Loading;
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             Window.Current.CoreWindow.KeyDown -= KeyInputOn;
             Window.Current.CoreWindow.KeyUp -= KeyInputOff;
-        }
-
-        Stopwatch frameWatch = new Stopwatch();
-        private void OnPaintSurface(object sender, SKPaintGLSurfaceEventArgs e)
-        {
-            float time = frameWatch.ElapsedMilliseconds / 30f;
-            time = time > 1 ? 1 : time;
-            frameWatch.Restart();
-            ViewModel.Update(time);
-
-            // Get canvas and info
-            var canvas = e.Surface.Canvas;
-            SKSwapChainPanel panel = (sender as SKSwapChainPanel);
-            // Draw
-            ViewModel.PaintSurface(canvas, panel.CanvasSize);
         }
 
         private void KeyInputOn(object sender, KeyEventArgs e)
@@ -92,6 +96,11 @@ namespace BassClefStudio.Dot.Game.Views
             {
                 ViewModel.GameState.Inputs.MoveLeft = false;
             }
+        }
+
+        private void GameUpdate(Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl sender, Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedUpdateEventArgs args)
+        {
+            ViewModel.Update((float)(args.Timing.ElapsedTime / TimeSpan.FromMilliseconds(30)));
         }
     }
 }

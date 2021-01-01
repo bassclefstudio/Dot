@@ -1,5 +1,5 @@
 ﻿using BassClefStudio.Dot.Core.Levels;
-using BassClefStudio.SkiaSharp.Helpers;
+using BassClefStudio.Graphics.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
 {
-    public class Camera : ICamera
+    public class Camera
     {
         public Vector2 ViewSize { get; private set; }
         public float ViewScale { get; private set; }
@@ -23,6 +23,16 @@ namespace BassClefStudio.Dot.Core.Rendering
 
             ViewSize = new Vector2(480, 360);
             ViewScale = 1;
+        }
+
+        public ViewCamera GetGraphicsCamera(Vector2 viewSpace)
+        {
+            Vector2 drawSpace = new Vector2(480, 360);
+            ZoomType zoomType = ZoomType.FitAll;
+            var viewCamera = new ViewCamera(viewSpace, drawSpace, zoomType, true);
+            var drawCamera = new ViewCamera(CameraScale, CameraPosition);
+
+            return drawCamera + viewCamera;
         }
 
         #region Movement
@@ -59,17 +69,17 @@ namespace BassClefStudio.Dot.Core.Rendering
             else
             {
                 Bounds bounds = new Bounds(region.Point1, region.Point2.Value);
-                if (region.Id == "Fixed")
+                if (region.Arg1 == "Fixed")
                 {
                     float zoom = region.ArgNum ?? MinZoom(bounds);
                     LerpCamera(bounds.Center(), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Id == "Bound")
+                else if (region.Arg1 == "Bound")
                 {
                     float zoom = region.ArgNum ?? FullZoom(bounds);
                     LerpCamera(BoundPosition(gameState.Player.Position, bounds, zoom), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Id == "View")
+                else if (region.Arg1 == "View")
                 {
                     float zoom = region.ArgNum ?? FullZoom(bounds);
                     LerpCamera(gameState.Player.Position, zoom, lerpSpeed / deltaFrames);

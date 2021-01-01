@@ -12,7 +12,7 @@ namespace BassClefStudio.Dot.Core.Levels
         public Vector2? Point2 { get; }
 
         public string Id { get; }
-        public string Arg { get; }
+        public string Arg1 { get; }
         public float? ArgNum { get; }
 
         public Segment(SegmentType type, Vector2 point1, string id = null, string arg = null)
@@ -20,8 +20,8 @@ namespace BassClefStudio.Dot.Core.Levels
             Type = type;
             Point1 = point1;
             Id = id;
-            Arg = arg;
-            ArgNum = float.TryParse(Arg, out var f) ? f : (float?)null;
+            Arg1 = arg;
+            ArgNum = float.TryParse(Arg1, out var f) ? f : (float?)null;
         }
 
         public Segment(SegmentType type, Vector2 point1, Vector2 point2, string id = null, string arg = null)

@@ -118,7 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppTitle.Text" xml:space="preserve">
-    <value>BassClefStudio.Dot.Game</value>
+    <value>Dot: A Platformer</value>
     <comment>The app's name, shown in the title bar of the app.</comment>
+  </data>
+  <data name="OpenFile.Label" xml:space="preserve">
+    <value>Open Game</value>
+    <comment>Open JSON file button label.</comment>
+  </data>
+  <data name="PlayFile.Label" xml:space="preserve">
+    <value>Play Default</value>
+    <comment>Play default level button label.</comment>
   </data>
 </root>
