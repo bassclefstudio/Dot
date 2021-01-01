@@ -25,10 +25,13 @@ namespace BassClefStudio.Dot.Core.Rendering
             ViewScale = 1;
         }
 
-        public ViewCamera GetGraphicsCamera(Vector2 viewSize)
+        public ViewCamera GetGraphicsCamera(Vector2 viewSpace)
         {
-            var viewCamera = new ViewCamera(viewSize, new Vector2(480, 360), ZoomType.FitAll, true);
+            Vector2 drawSpace = new Vector2(480, 360);
+            ZoomType zoomType = ZoomType.FitAll;
+            var viewCamera = new ViewCamera(viewSpace, drawSpace, zoomType, true);
             var drawCamera = new ViewCamera(CameraScale, CameraPosition);
+
             return drawCamera + viewCamera;
         }
 
