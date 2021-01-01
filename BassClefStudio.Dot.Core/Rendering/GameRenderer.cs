@@ -20,7 +20,7 @@ namespace BassClefStudio.Dot.Core.Rendering
     {
         public GameState GameState { get; set; }
 
-        public Dictionary<string, Color> Paints { get; }
+        public Dictionary<string, Tuple<Color, float?>> Paints { get; }
 
         public Camera ViewCamera { get; set; }
 
@@ -29,17 +29,17 @@ namespace BassClefStudio.Dot.Core.Rendering
         /// </summary>
         public GameRenderer()
         {
-            Paints = new Dictionary<string, Color>()
+            Paints = new Dictionary<string, Tuple<Color, float?>>()
             {
-                { "Background", new Color(0,200,0) },
-                { "Wall", new Color(255,255,255) },
-                { "Lava", new Color(255,0,0) },
-                { "Bounce", new Color(200,200,0) },
-                { "Flip", new Color(255,40,255) },
-                { "Portal", new Color(200,200,255) },
-                { "Teleport", new Color(200,200,255) },
-                { "End", new Color(100,255,100) },
-                { "Player", new Color(255,255,255) }
+                { "Background", new Tuple<Color, float?>(new Color(0,200,0), null) },
+                { "Wall", new Tuple<Color, float?>(new Color(255,255,255), null) },
+                { "Lava", new Tuple<Color, float?>(new Color(255,0,0), null) },
+                { "Bounce", new Tuple<Color, float?>(new Color(200,200,0), null) },
+                { "Flip", new Tuple<Color, float?>(new Color(255,40,255), 6) },
+                { "Portal", new Tuple<Color, float?>(new Color(200,200,255), null) },
+                { "Teleport", new Tuple<Color, float?>(new Color(200,200,255), 6) },
+                { "End", new Tuple<Color, float?>(new Color(100,255,100), null) },
+                { "Player", new Tuple<Color, float?>(new Color(255,255,255), null) }
             };
         }
 
@@ -58,7 +58,8 @@ namespace BassClefStudio.Dot.Core.Rendering
                         graphics.DrawLine(
                             segment.Point1,
                             segment.Point2.Value,
-                            Paints[paintKey]);
+                            Paints[paintKey].Item1,
+                            Paints[paintKey].Item2);
                     }
 
                     void DrawPoint(Segment segment, float size, string paintKey)
@@ -66,7 +67,7 @@ namespace BassClefStudio.Dot.Core.Rendering
                         graphics.FillEllipse(
                             segment.Point1,
                             new Vector2(size, size),
-                            Paints[paintKey]);
+                            Paints[paintKey].Item1);
                     }
 
                     foreach (var segment in GameState.Map.CurrentLevel.Segments)
@@ -117,7 +118,7 @@ namespace BassClefStudio.Dot.Core.Rendering
                     }
 
                     Vector2 playerPos = GameState.Player.Position;
-                    graphics.FillEllipse(playerPos, new Vector2(4, 4), Paints["Player"]);
+                    graphics.FillEllipse(playerPos, new Vector2(4, 4), Paints["Player"].Item1);
                 }
                 _ = graphics.FlushAsync();
             }

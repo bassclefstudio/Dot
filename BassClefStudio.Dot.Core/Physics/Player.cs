@@ -115,9 +115,10 @@ namespace BassClefStudio.Dot.Core.Physics
             CheckFlip(gameState);
             CheckEnd(gameState);
 
-            // Manage "ghosts"
+            //// Manage "ghosts"
             frame += 1;
-            if (frame >= 1)
+            //// Run at 60fps (1 ghost per 2 frames)
+            if (frame >= 2)
             {
                 frame = 0;
                 if(Ghosts.Count > maxGhosts)
