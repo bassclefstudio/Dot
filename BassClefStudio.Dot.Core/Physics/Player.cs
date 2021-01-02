@@ -280,13 +280,13 @@ namespace BassClefStudio.Dot.Core.Physics
 
             if (isCollision && !inEnd)
             {
-                if (string.IsNullOrWhiteSpace(collision.Id))
+                if (string.IsNullOrWhiteSpace(collision.Args[0]))
                 {
                     gameState.Map.NextLevel();
                 }
                 else
                 {
-                    var level = gameState.Map.Levels.FirstOrDefault(l => l.Name == collision.Id);
+                    var level = gameState.Map.Levels.FirstOrDefault(l => l.Name == collision.Args[0]);
                     gameState.Map.SetLevel(level);
                 }
             }
