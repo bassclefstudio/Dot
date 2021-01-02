@@ -11,14 +11,27 @@ namespace BassClefStudio.Dot.Core.Physics
 {
     public class Player
     {
+        /// <summary>
+        /// The current position of the <see cref="Player"/>.
+        /// </summary>
         public Vector2 Position { get; set; }
+
+        /// <summary>
+        /// The previous 'ghosted' positions of the <see cref="Player"/>.
+        /// </summary>
         public List<Vector2> Ghosts { get; } = new List<Vector2>();
 
+        /// <summary>
+        /// Creates a new <see cref="Player"/> and resets it.
+        /// </summary>
         public Player()
         {
             Reset();
         }
 
+        /// <summary>
+        /// Resets the <see cref="Player"/> to its initial state.
+        /// </summary>
         public void Reset()
         {
             Ghosts.Clear();
@@ -27,13 +40,18 @@ namespace BassClefStudio.Dot.Core.Physics
             frame = 0;
             Velocity = new Vector2(0, 0);
             Acceleration = new Vector2(0, -1);
+
+            jumping = false;
+            inPortal = false;
+            inEnd = false;
+            isFlip = null;
         }
 
         public void SetStartingPos(Level level)
         {
             Reset();
             var start = level.Segments.FirstOrDefault(s => s.Type == SegmentType.Start);
-            if(start != null)
+            if (start != null)
             {
                 Position = start.Point1;
             }
@@ -49,7 +67,7 @@ namespace BassClefStudio.Dot.Core.Physics
         const float jumpSpeed = 12;
         const float moveSpeed = 1;
         const float minV = 0.25f;
-        const float maxV = 18;
+        const float maxV = 16.5f;
         const int maxGhosts = 5;
 
         #endregion
@@ -61,20 +79,25 @@ namespace BassClefStudio.Dot.Core.Physics
         #endregion
         #region Main
 
+        /// <summary>
+        /// Applies the physics calculations to the given <see cref="GameState"/>.
+        /// </summary>
+        /// <param name="gameState">The <see cref="GameState"/> to move the <see cref="Player"/> against.</param>
+        /// <param name="deltaFrames">The number of frames passed since the last call to <see cref="DoPhysics(GameState, float)"/>.</param>
         public void DoPhysics(GameState gameState, float deltaFrames)
         {
             TempPos = Position;
             CalculateAcc();
             Velocity += Acceleration * deltaFrames;
-            
-            if(grounded > 0 && gameState.Inputs.Jump)
+
+            if (grounded > 0 && gameState.Inputs.Jump)
             {
                 grounded = 0;
                 Jump(jumpSpeed);
             }
 
             TempPos += ToVertical(Velocity) * deltaFrames;
-            if(HandleWalls(gameState.Map.CurrentLevel.Segments, deltaFrames, false) == CollisionHandled.Collision)
+            if (HandleWalls(gameState.Map.CurrentLevel.Segments, deltaFrames, false) == CollisionHandled.Collision)
             {
                 if ((Math.Sign(Velocity.X) == Math.Sign(Acceleration.X) || accCos == 0)
                     && (Math.Sign(Velocity.Y) == Math.Sign(Acceleration.Y) || accSin == 0))
@@ -84,14 +107,14 @@ namespace BassClefStudio.Dot.Core.Physics
 
                 Velocity = ToHorizontal(Velocity);
             }
-            else if(grounded > 0)
+            else if (grounded > 0)
             {
                 grounded -= deltaFrames;
             }
 
             Velocity += (deltaFrames * moveSpeed * gameState.Inputs.Move) * ToHorizontal(new Vector2(1, -1));
             TempPos += ToHorizontal(Velocity) * deltaFrames;
-            if(HandleWalls(gameState.Map.CurrentLevel.Segments, deltaFrames, true) == CollisionHandled.CollisionSlope)
+            if (HandleWalls(gameState.Map.CurrentLevel.Segments, deltaFrames, true) == CollisionHandled.CollisionSlope)
             {
                 TempPos -= ToHorizontal(Velocity) * deltaFrames;
                 Velocity -= 1.5f * ToHorizontal(Velocity);
@@ -121,7 +144,7 @@ namespace BassClefStudio.Dot.Core.Physics
             if (frame >= 2)
             {
                 frame = 0;
-                if(Ghosts.Count > maxGhosts)
+                if (Ghosts.Count > maxGhosts)
                 {
                     Ghosts.RemoveAt(0);
                 }
@@ -170,10 +193,14 @@ namespace BassClefStudio.Dot.Core.Physics
         public void CheckPortals(GameState gameState)
         {
             var segments = gameState.Map.CurrentLevel.Segments;
-            
+
             void SetPosAndVel(Segment portal)
             {
-                var otherPortal = segments.FirstOrDefault(s => (s.Type == SegmentType.Portal || s.Type == SegmentType.Teleport) && s.Id == portal.Arg1);
+                var otherPortal = segments.FirstOrDefault(
+                    s => (s.Type == SegmentType.Portal 
+                    || s.Type == SegmentType.Teleport) 
+                    && s.Id == portal.Args[0]);
+
                 if (otherPortal != null)
                 {
                     //To point portal.
@@ -266,21 +293,42 @@ namespace BassClefStudio.Dot.Core.Physics
             inEnd = isCollision;
         }
 
-        private bool inFlip;
+        bool? isFlip = null;
         public void CheckFlip(GameState gameState)
         {
+            float maxCheck = Velocity.LengthSquared();
+            if (maxCheck < collisionDistance)
+            {
+                maxCheck = collisionDistance;
+            }
+
             var segments = gameState.Map.CurrentLevel.Segments;
             Segment collision = GetCollision(
                 segments.Where(s => s.Type == SegmentType.Flip),
                 Position,
-                collisionDistance);
-            bool isCollision = collision != null;
+                maxCheck);
 
-            if (isCollision && !inFlip)
+            if (collision != null)
             {
-                Acceleration = Acceleration * new Vector2(1, -1);
+                float u = GetU(Position, collision.Point1, collision.Point2.Value);
+                if (u > 0 && u < 1)
+                {
+                    bool side = GetSide(Position, collision.Point1, collision.Point2.Value);
+                    if(isFlip != null && isFlip != side)
+                    {
+                        Acceleration *= new Vector2(1, -1);
+                    }
+                    isFlip = side;
+                }
+                else
+                {
+                    isFlip = null;
+                }
             }
-            inFlip = isCollision;
+            else
+            {
+                isFlip = null;
+            }
         }
 
         #endregion
@@ -296,7 +344,7 @@ namespace BassClefStudio.Dot.Core.Physics
         private CollisionHandled HandleWalls(IEnumerable<Segment> segments, float deltaFrames, bool useSlope)
         {
             var collision = GetCollision(segments.Where(s => s.Type == SegmentType.Wall), TempPos, collisionDistance);
-            if(collision != null)
+            if (collision != null)
             {
                 int slope = 0;
                 bool isCollision = true;
@@ -304,14 +352,14 @@ namespace BassClefStudio.Dot.Core.Physics
                     Math.Sign(Velocity.X) * Math.Sign(Acceleration.X) * accCos,
                     Math.Sign(Velocity.Y) * Math.Sign(Acceleration.Y) * accSin);
                 Vector2 priorPos = TempPos;
-                while((slope < maxSlope || !useSlope) && isCollision)
+                while ((slope < maxSlope || !useSlope) && isCollision)
                 {
                     slope += 1;
                     TempPos += deltaFrames * perpendicular;
                     isCollision = GetCollision(collision, TempPos, collisionDistance);
                 }
 
-                if(slope >= maxSlope && useSlope)
+                if (slope >= maxSlope && useSlope)
                 {
                     TempPos = priorPos;
                     return CollisionHandled.CollisionSlope;
@@ -335,9 +383,18 @@ namespace BassClefStudio.Dot.Core.Physics
         #endregion
         #region Vectors
 
+        /// <summary>
+        /// A temporary store for the <see cref="Position"/> of the <see cref="Player"/> during calculations.
+        /// </summary>
         private Vector2 TempPos;
 
-        public Vector2 Velocity { get; private set; } 
+        /// <summary>
+        /// The current <see cref="Vector2"/> velocity of the <see cref="Player"/>.
+        /// </summary>
+        public Vector2 Velocity { get; private set; }
+        /// <summary>
+        /// The current <see cref="Vector2"/> acceleration of the <see cref="Player"/>.
+        /// </summary>
         public Vector2 Acceleration { get; private set; }
 
         private float accCos;
@@ -419,7 +476,7 @@ namespace BassClefStudio.Dot.Core.Physics
         private float GetDistanceSquared(Vector2 point, Vector2 line1, Vector2 line2)
         {
             float u = GetU(point, line1, line2);
-            if(u > 1)
+            if (u > 1)
             {
                 return GetDistanceSquared(line2, point);
             }
@@ -437,6 +494,13 @@ namespace BassClefStudio.Dot.Core.Physics
         private float GetDistanceSquared(Vector2 a, Vector2 b)
         {
             return (a - b).LengthSquared();
+        }
+
+        private bool GetSide(Vector2 point, Vector2 line1, Vector2 line2)
+        {
+            var b = (point.X - line1.X) * (line2.Y - line1.Y) - (point.Y - line1.Y) * (line2.X - line1.X);
+            return b > 0;
+
         }
 
         #endregion

@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>BassClefStudio</Authors>
-    <Version>0.5.2</Version>
-    <Description>Core libraries built on SkiaSharp for the game Dot: Return, a platformer (https://scratch.mit.edu/projects/412149960/).</Description>
+    <Version>0.12.1</Version>
+    <Description>Core libraries built on BassClefStudio.Graphics for the game Dot: Return, a platformer (https://scratch.mit.edu/projects/412149960/).</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

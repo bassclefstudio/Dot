@@ -7,11 +7,11 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="6428d0f3-df94-4f59-b11e-c6cb9c175d14"
-    Publisher="CN=Decklan Spencer"
+    Name="29071DecklanSpencer.DotAPlatformer"
+    Publisher="CN=6FDD8824-9D27-4392-8B8A-3D173E884B6C"
     Version="0.4.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="6428d0f3-df94-4f59-b11e-c6cb9c175d14" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="0a687d2e-15f3-41a2-9b27-8a736e9a2213" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Dot: A Platformer</DisplayName>
