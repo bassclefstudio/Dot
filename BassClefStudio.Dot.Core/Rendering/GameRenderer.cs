@@ -18,10 +18,19 @@ namespace BassClefStudio.Dot.Core.Rendering
     /// </summary>
     public class GameRenderer
     {
+        /// <summary>
+        /// The current game to render.
+        /// </summary>
         public GameState GameState { get; set; }
 
+        /// <summary>
+        /// A collection of <see cref="Color"/>/stroke-width pairs for drawing similar lines/points.
+        /// </summary>
         public Dictionary<string, Tuple<Color, float?>> Paints { get; }
 
+        /// <summary>
+        /// The <see cref="Camera"/> used to view the <see cref="GameState"/>.
+        /// </summary>
         public Camera ViewCamera { get; set; }
 
         /// <summary>
@@ -43,6 +52,11 @@ namespace BassClefStudio.Dot.Core.Rendering
             };
         }
 
+        /// <summary>
+        /// Renders the content of the <see cref="GameState"/> onto an <see cref="ITurtleGraphicsProvider"/>.
+        /// </summary>
+        /// <param name="graphics">An <see cref="ITurtleGraphicsProvider"/> to draw the game onto.</param>
+        /// <param name="viewSize">The true view-size to adjust for.</param>
         public void Render(ITurtleGraphicsProvider graphics, Vector2 viewSize)
         {
             graphics.Camera = ViewCamera.GetGraphicsCamera(viewSize);
@@ -106,19 +120,19 @@ namespace BassClefStudio.Dot.Core.Rendering
                         }
                     }
 
-                    byte alpha = 0;
+                    byte alpha = 128;
                     for (int i = 0; i < GameState.Player.Ghosts.Count; i++)
                     {
-                        alpha += (byte)(255 / GameState.Player.Ghosts.Count);
+                        alpha += (byte)(127 / GameState.Player.Ghosts.Count);
                         var ghostWidth = (i + 1) * (6 / GameState.Player.Ghosts.Count);
                         var ghostColor = new Color(255, 255, 255, alpha);
 
                         Vector2 ghostPos = GameState.Player.Ghosts[i];
-                        graphics.FillEllipse(ghostPos, new Vector2(ghostWidth, ghostWidth), ghostColor);
+                        graphics.FillEllipse(ghostPos, new Vector2(ghostWidth), ghostColor);
                     }
 
                     Vector2 playerPos = GameState.Player.Position;
-                    graphics.FillEllipse(playerPos, new Vector2(4, 4), Paints["Player"].Item1);
+                    graphics.FillEllipse(playerPos, new Vector2(6), Paints["Player"].Item1);
                 }
                 _ = graphics.FlushAsync();
             }

@@ -8,14 +8,34 @@ using System.Text;
 
 namespace BassClefStudio.Dot.Core.Rendering
 {
+    /// <summary>
+    /// Represents the in-game camera, as implemented by the Dot Scratch project, and provides means for creating a <see cref="ViewCamera"/> for rendering Graphics content.
+    /// </summary>
     public class Camera
     {
+        /// <summary>
+        /// The size of the view, as a <see cref="Vector2"/> (used for adjusting zooms and bound pans).
+        /// </summary>
         public Vector2 ViewSize { get; private set; }
+
+        /// <summary>
+        /// The scale of the <see cref="ViewSize"/> - in view-space to zoom-space (multiplier for zoom and bound pan calc.s).
+        /// </summary>
         public float ViewScale { get; private set; }
 
+        /// <summary>
+        /// The <see cref="Vector2"/> position of the camera in game-space.
+        /// </summary>
         public Vector2 CameraPosition { get; private set; }
+
+        /// <summary>
+        /// The <see cref="float"/> zoom of the camera in game-space.
+        /// </summary>
         public float CameraScale { get; private set; }
 
+        /// <summary>
+        /// Creates and initializes a new <see cref="Camera"/>.
+        /// </summary>
         public Camera()
         {
             CameraPosition = new Vector2(0, 0);
@@ -25,6 +45,10 @@ namespace BassClefStudio.Dot.Core.Rendering
             ViewScale = 1;
         }
 
+        /// <summary>
+        /// Creates the <see cref="ViewCamera"/> used by the Graphics libraries with the information of this <see cref="Camera"/>.
+        /// </summary>
+        /// <param name="viewSpace">The true view-space size, which the <see cref="ViewCamera"/> adjusts for.</param>
         public ViewCamera GetGraphicsCamera(Vector2 viewSpace)
         {
             Vector2 drawSpace = new Vector2(480, 360);
@@ -69,19 +93,19 @@ namespace BassClefStudio.Dot.Core.Rendering
             else
             {
                 Bounds bounds = new Bounds(region.Point1, region.Point2.Value);
-                if (region.Arg1 == "Fixed")
+                if (region.Args[0] == "Fixed")
                 {
-                    float zoom = region.ArgNum ?? MinZoom(bounds);
+                    float zoom = region.ArgNums.ElementAtOrDefault(1) ?? MinZoom(bounds);
                     LerpCamera(bounds.Center(), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Arg1 == "Bound")
+                else if (region.Args[0] == "Bound")
                 {
-                    float zoom = region.ArgNum ?? FullZoom(bounds);
+                    float zoom = region.ArgNums.ElementAtOrDefault(1) ?? FullZoom(bounds);
                     LerpCamera(BoundPosition(gameState.Player.Position, bounds, zoom), zoom, lerpSpeed / deltaFrames);
                 }
-                else if (region.Arg1 == "View")
+                else if (region.Args[0] == "View")
                 {
-                    float zoom = region.ArgNum ?? FullZoom(bounds);
+                    float zoom = region.ArgNums.ElementAtOrDefault(1) ?? FullZoom(bounds);
                     LerpCamera(gameState.Player.Position, zoom, lerpSpeed / deltaFrames);
                 }
             }
