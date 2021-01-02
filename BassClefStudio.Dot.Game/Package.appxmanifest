@@ -9,7 +9,7 @@
   <Identity
     Name="29071DecklanSpencer.DotAPlatformer"
     Publisher="CN=6FDD8824-9D27-4392-8B8A-3D173E884B6C"
-    Version="0.4.0.0" />
+    Version="0.10.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="0a687d2e-15f3-41a2-9b27-8a736e9a2213" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
