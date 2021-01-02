@@ -138,18 +138,22 @@ namespace BassClefStudio.Dot.Core.Physics
             CheckFlip(gameState);
             CheckEnd(gameState);
 
+            ManageGhosts(deltaFrames);
+        }
+
+        private void ManageGhosts(float deltaFrames)
+        {
             //// Manage "ghosts"
-            frame += 1;
+            frame += deltaFrames;
             //// Run at 60fps (1 ghost per 2 frames)
-            if (frame >= 2)
+            if (frame >= 1)
             {
                 frame = 0;
+                Ghosts.Add(Position);
                 if (Ghosts.Count > maxGhosts)
                 {
                     Ghosts.RemoveAt(0);
                 }
-
-                Ghosts.Add(Position);
             }
         }
 
@@ -196,39 +200,43 @@ namespace BassClefStudio.Dot.Core.Physics
 
             void SetPosAndVel(Segment portal)
             {
-                var otherPortal = segments.FirstOrDefault(
-                    s => (s.Type == SegmentType.Portal 
-                    || s.Type == SegmentType.Teleport) 
-                    && s.Id == portal.Args[0]);
-
-                if (otherPortal != null)
+                var otherId = portal.Args.ElementAtOrDefault(0);
+                if (otherId != null)
                 {
-                    //To point portal.
-                    if (otherPortal.Type == SegmentType.Portal)
-                    {
-                        Position = otherPortal.Point1;
-                    }
-                    //To line portal.
-                    else if (otherPortal.Type == SegmentType.Teleport)
-                    {
-                        float angle = 0f;
-                        Vector2 slope = otherPortal.Point2.Value - otherPortal.Point1;
+                    var otherPortal = segments.FirstOrDefault(
+                        s => (s.Type == SegmentType.Portal
+                        || s.Type == SegmentType.Teleport)
+                        && s.Id == otherId);
 
-                        //Line to line.
-                        if (portal.Type == SegmentType.Teleport)
+                    if (otherPortal != null)
+                    {
+                        //To point portal.
+                        if (otherPortal.Type == SegmentType.Portal)
                         {
-                            float u = GetU(Position, portal.Point1, portal.Point2.Value);
-                            Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, u);
-                            angle = GetAngle(portal.Point2.Value - portal.Point1) - GetAngle(slope);
+                            Position = otherPortal.Point1;
                         }
-                        //Point to line.
-                        else if (portal.Type == SegmentType.Portal)
+                        //To line portal.
+                        else if (otherPortal.Type == SegmentType.Teleport)
                         {
-                            Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, 0.5f);
-                            angle = ((float)Math.PI / 2) + GetAngle(slope);
-                        }
+                            float angle = 0f;
+                            Vector2 slope = otherPortal.Point2.Value - otherPortal.Point1;
 
-                        Velocity = Rotate(Velocity, angle);
+                            //Line to line.
+                            if (portal.Type == SegmentType.Teleport)
+                            {
+                                float u = GetU(Position, portal.Point1, portal.Point2.Value);
+                                Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, u);
+                                angle = GetAngle(portal.Point2.Value - portal.Point1) - GetAngle(slope);
+                            }
+                            //Point to line.
+                            else if (portal.Type == SegmentType.Portal)
+                            {
+                                Position = GetBetween(otherPortal.Point1, otherPortal.Point2.Value, 0.5f);
+                                angle = ((float)Math.PI / 2) + GetAngle(slope);
+                            }
+
+                            Velocity = Rotate(Velocity, angle);
+                        }
                     }
                 }
             }
@@ -280,14 +288,21 @@ namespace BassClefStudio.Dot.Core.Physics
 
             if (isCollision && !inEnd)
             {
-                if (string.IsNullOrWhiteSpace(collision.Args[0]))
+                if (string.IsNullOrWhiteSpace(collision.Args.ElementAtOrDefault(0)))
                 {
                     gameState.Map.NextLevel();
                 }
                 else
                 {
                     var level = gameState.Map.Levels.FirstOrDefault(l => l.Name == collision.Args[0]);
-                    gameState.Map.SetLevel(level);
+                    if (level == null)
+                    {
+                        gameState.Map.NextLevel();
+                    }
+                    else
+                    {
+                        gameState.Map.SetLevel(level);
+                    }
                 }
             }
             inEnd = isCollision;

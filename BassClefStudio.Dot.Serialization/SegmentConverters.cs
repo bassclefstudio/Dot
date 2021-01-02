@@ -60,14 +60,13 @@ namespace BassClefStudio.Dot.Serialization
                 Vector2 point1 = new Vector2((float)jObject["X1"], (float)jObject["Y1"]);
                 string id = (string)jObject["Id"];
 
-                var jsonArgs = jObject.Values()
-                    .OfType<JProperty>()
+                var jsonArgs = jObject.Properties()
                     .Where(j => j.Name.StartsWith("Arg"))
                     .OrderBy(j => j.Name);
                 List<string> args = new List<string>();
                 foreach (var a in jsonArgs)
                 {
-                    args.Add((string)a);
+                    args.Add((string)a.Value);
                 }
 
                 SegmentType type = (SegmentType)Enum.Parse(typeof(SegmentType), (string)jObject["Type"]);
